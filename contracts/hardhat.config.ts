@@ -22,9 +22,8 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      forking: {
-        url: ENV.MAINET_URL,
-        blockNumber: 13000000,
+      accounts: {
+        mnemonic: ENV.MNEMONIC,
       },
     },
     mumbai: {
