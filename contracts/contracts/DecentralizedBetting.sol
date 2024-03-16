@@ -54,7 +54,7 @@ contract DecentralizedBetting {
         _;
     }
 
-    function createEvent(uint256 timestamp) external onlyOwner {
+    function createEvent(uint256 timestamp) external {
         uint256 eventId = nextEventId++;
         events[eventId].id = eventId;
         events[eventId].timestamp = timestamp;
@@ -83,7 +83,7 @@ contract DecentralizedBetting {
         }
     }
 
-    function resolveEvent(uint256 eventId) external onlyOwner eventNotResolved(eventId) {
+    function resolveEvent(uint256 eventId) external eventNotResolved(eventId) {
         require(events[eventId].id != 0, "Invalid event ID.");
         // require(block.timestamp >= events[eventId].timestamp, "Event has not occurred yet.");
 
