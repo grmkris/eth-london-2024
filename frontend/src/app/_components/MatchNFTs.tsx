@@ -3,7 +3,10 @@ import {
   useReadDecentralizedBettingEvents,
   useReadMatchNftBalanceOf,
   useReadMatchNftTokenUri,
+  useSimulateDecentralizedBettingCreateEvent,
+  useWriteDecentralizedBettingCreateEvent,
 } from "~/generated";
+import { Button } from "~/components/ui/button";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -43,5 +46,24 @@ export const MatchNFT = ({ id }: { id: number }) => {
       <h1>Match NFT {id}</h1>
       <p>events: {JSON.stringify(data)}</p>
     </div>
+  );
+};
+
+export const CreateMatchComponent = () => {
+  const timestamp = Date.now();
+  const writeDecentralizedBettingCreateEvent =
+    useWriteDecentralizedBettingCreateEvent();
+
+  return (
+    <Button
+      onClick={() => {
+        writeDecentralizedBettingCreateEvent.writeContractAsync({
+          address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+          args: [BigInt(timestamp)],
+        });
+      }}
+    >
+      Create match
+    </Button>
   );
 };

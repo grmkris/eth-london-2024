@@ -14,7 +14,11 @@ import { Slider } from "~/components/ui/slider";
 import { CreatePost } from "~/app/_components/create-post";
 import { api } from "~/trpc/server";
 import { HelloForm } from "~/app/_components/FormComponent";
-import { MatchNFT, MatchNFTs } from "~/app/_components/MatchNFTs";
+import {
+  CreateMatchComponent,
+  MatchNFT,
+  MatchNFTs,
+} from "~/app/_components/MatchNFTs";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -22,6 +26,7 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <MatchNFTs />
+      <CreateMatchComponent />
       <div className="grid gap-6 sm:grid-cols-1 lg:max-w-[70%] lg:grid-cols-1 xl:grid-cols-1">
         <Card>
           <CardHeader>
@@ -109,14 +114,22 @@ export default async function Home() {
               />
             </div>
             <div className="min-w-full">
-              <div className="flex flex-row min-w-full">
+              <div className="flex min-w-full flex-row">
                 <div className="max-w-half min-w-full">
                   Initial Weight A
-                  <Input className="min-w-[40%]" id="match-params" placeholder="Enter amount" />
+                  <Input
+                    className="min-w-[40%]"
+                    id="match-params"
+                    placeholder="Enter amount"
+                  />
                 </div>
                 <div className="max-w-half">
                   Initial Weight A
-                  <Input className="min-w-[40%]" id="match-params" placeholder="Enter amount" />
+                  <Input
+                    className="min-w-[40%]"
+                    id="match-params"
+                    placeholder="Enter amount"
+                  />
                 </div>
               </div>
             </div>
