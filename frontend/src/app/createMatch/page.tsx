@@ -7,12 +7,14 @@ import { useWriteDecentralizedBettingCreateEvent } from "~/generated";
 import { ADDRESSES } from "~/app/_components/MatchNFTs";
 import { useState } from "react";
 
-
 export default function CreateMatch() {
-    const writeDecentralizedBettingCreateEvent =
+  const writeDecentralizedBettingCreateEvent =
     useWriteDecentralizedBettingCreateEvent();
 
-    const [timeStamp, setTimestamp] = useState(new Date().getTime() / 1000);
+  const [timeStamp, setTimestamp] = useState(new Date().getTime() / 1000);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTimestamp(new Date(e.target.value).getTime() / 1000);
+  };
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <Card className="min-w-[50%]">
@@ -40,6 +42,7 @@ export default function CreateMatch() {
               id="match-name"
               placeholder="Match Name"
               type="date"
+              onChange={handleDateChange}
             />
           </div>
           <div className="flex flex-row justify-between">
