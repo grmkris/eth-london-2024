@@ -12,8 +12,11 @@ export const HelloSchema = z.object({
 
 export const HelloForm = () => {
   return (
-    <AutoForm formSchema={HelloSchema} onSubmit={console.log}>
-      <AutoFormSubmit />
-    </AutoForm>
+    <>
+      <AutoForm formSchema={HelloSchema} onSubmit={console.log}>
+        <AutoFormSubmit />
+      </AutoForm>
+      <w3m-button />
+    </>
   );
 };
