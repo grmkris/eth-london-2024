@@ -10,8 +10,8 @@ export async function GET(
 
   // Construct ERC-721 valid JSON metadata object
   const metadata = {
-    name: `Asset ${slug}`, // A title for your asset
-    description: greeting, // A description for your asset, using the greeting
+    name: `PSG vs Manchester City`,
+    description: "A friendly charity match",
     image: `https://eth-london-2024-frontend.vercel.app/api/og/${slug}`,
     // Additional properties can be added here as needed
   };

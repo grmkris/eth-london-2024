@@ -10,7 +10,11 @@ export async function GET(
   { params }: { params: { token: string } },
 ) {
   const slug = params.token;
-  const greeting = `${"Hello"} ${slug}!!!`;
+  const greeting = `Greeting ${slug}!`;
+  const match = "Manchester City vs PSG";
+  const score = "Score: Not started yet";
+  const odds = "Odds: PSG 3.5 <-> Manchester City 2.0";
+
   return new ImageResponse(
     (
       <div
@@ -24,9 +28,14 @@ export async function GET(
           textAlign: "center",
           justifyContent: "center",
           alignItems: "center",
+          display: "flex",
+          flexDirection: "column", // Adjust layout to column for stacking elements
         }}
       >
-        {`👋 ${greeting} `}
+        <div>{`👋 ${greeting}`}</div>
+        <div style={{ fontSize: 30, marginTop: 20 }}>{match}</div>
+        <div style={{ fontSize: 25, marginTop: 20 }}>{score}</div>
+        <div style={{ fontSize: 20, marginTop: 20 }}>{odds}</div>
       </div>
     ),
     {
