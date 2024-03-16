@@ -96,7 +96,7 @@ contract DecentralizedBetting {
     }
 
 
-    function claimWinnings(uint256 eventId) external eventNotResolved(eventId) {
+    function claimWinnings(uint256 eventId) external {
         require(events[eventId].resolved, "Event has not been resolved.");
         Bet storage bet = bets[eventId][msg.sender];
         require(bet.amount > 0, "User has no bet to claim.");

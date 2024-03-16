@@ -44,8 +44,8 @@
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/DecentralizedBetting.sol": {
-      "lastModificationDate": 1710596878078,
-      "contentHash": "a7159f8fe02ad8a4b57bb1b79353e77b",
+      "lastModificationDate": 1710599966948,
+      "contentHash": "e561f1cf9c2d3b174c96298f6bae713b",
       "sourceName": "contracts/DecentralizedBetting.sol",
       "solcConfig": {
         "version": "0.8.24",

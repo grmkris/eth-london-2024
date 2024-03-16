@@ -51,10 +51,10 @@ describe("DecentralizedBetting", function () {
         console.log("Not running on Hardhat default network, reusing");
         // Attempt to use existing contract addresses from environment variables or a config
         const deployedAddresses = {
-          decentralizedBetting: "0x0d1B990935DF3E2Bc68762CF5Ea525FCfA296877",
-          matchNFT: "0x0822b8f1a3A9DA5c58d33631f6D8f426e2856d50",
-          socialOracle: "0x803DEa460C42BaFC52572b62710644cC7c7bBb4F",
-          stakeContract: "0xa83C10535e45DA8d746F651b7a561E90FCD7ad20",
+          decentralizedBetting: "0x62A6f3DA5357F0E541F46a2B02a23c430cDECde5",
+          matchNFT: "0x3301d66aE591355D67Cd9987aEfcA914004A65BD",
+          socialOracle: "0x2b1DF9f0eC7A6b03d1B664871c667ba718404ee1",
+          stakeContract: "0x65e63f6Ae6f5758cFCa2F37F3F76013bb7154382",
         };
 
         // Instantiate contracts from deployed addresses if they are set
@@ -119,10 +119,10 @@ describe("DecentralizedBetting", function () {
         console.log("Not running on Hardhat default network, reusing");
         // Attempt to use existing contract addresses from environment variables or a config
         const deployedAddresses = {
-          decentralizedBetting: "0x0d1B990935DF3E2Bc68762CF5Ea525FCfA296877",
-          matchNFT: "0x0822b8f1a3A9DA5c58d33631f6D8f426e2856d50",
-          socialOracle: "0x803DEa460C42BaFC52572b62710644cC7c7bBb4F",
-          stakeContract: "0xa83C10535e45DA8d746F651b7a561E90FCD7ad20",
+          decentralizedBetting: "0x62A6f3DA5357F0E541F46a2B02a23c430cDECde5",
+          matchNFT: "0x3301d66aE591355D67Cd9987aEfcA914004A65BD",
+          socialOracle: "0x2b1DF9f0eC7A6b03d1B664871c667ba718404ee1",
+          stakeContract: "0x65e63f6Ae6f5758cFCa2F37F3F76013bb7154382",
         };
 
         // Instantiate contracts from deployed addresses if they are set
@@ -179,56 +179,56 @@ describe("DecentralizedBetting", function () {
 
       // Verify the event was created correctly
       // Note: Implement the getEvent function in your contract to fetch event details
-      const eventData = await decentralizedBetting.read.events([BigInt(9)]);
+      const eventData = await decentralizedBetting.read.events([BigInt(1)]);
 
       console.log("Event data", eventData);
 
       // check that nft was minted for nft
 
-      const nft = await matchNFT.read.ownerOf([BigInt(9)]);
+      const nft = await matchNFT.read.ownerOf([BigInt(1)]);
       expect(nft.toLowerCase()).to.equal(admin.account.address.toLowerCase());
 
       // check that question was created for social oracle
-      const question = await socialOracle.read.questions([BigInt(9)]);
+      const question = await socialOracle.read.questions([BigInt(1)]);
 
       console.log("Question", question);
 
       const betTx = await decentralizedBetting.write.placeBet(
-        [BigInt(9), false],
+        [BigInt(1), false],
         { account: fan1.account, value: BigInt(50000) },
       );
 
       console.log("Bet tx 1", betTx);
       const betTx2 = await decentralizedBetting.write.placeBet(
-        [BigInt(9), true],
+        [BigInt(1), true],
         { account: fan2.account, value: BigInt(50000) },
       );
 
       console.log("Bet tx 2", betTx2);
 
       const betTx3 = await decentralizedBetting.write.placeBet(
-        [BigInt(9), false],
+        [BigInt(1), false],
         { account: fan3.account, value: BigInt(50000) },
       );
 
       console.log("Bet tx 3", betTx3);
 
       const oracleTx1 = await socialOracle.write.submitAnswer(
-        [BigInt(9), true],
+        [BigInt(1), true],
         { account: staker1.account },
       );
 
       console.log("oracletx1", oracleTx1);
 
       const oracleTx2 = await socialOracle.write.submitAnswer(
-        [BigInt(9), true],
+        [BigInt(1), true],
         { account: staker2.account },
       );
 
       console.log("oracletx2", oracleTx2);
 
       const determineAnswerOracle =
-        await socialOracle.write.determineCorrectAnswer([BigInt(9)]);
+        await socialOracle.write.determineCorrectAnswer([BigInt(1)]);
 
       console.log("determineAnswerOracle", determineAnswerOracle);
 
@@ -237,14 +237,18 @@ describe("DecentralizedBetting", function () {
       });
 
       const resolveTx = await decentralizedBetting.write.resolveEvent([
-        BigInt(9),
+        BigInt(1),
       ]);
+
+      await waitForTransactionReceipt(pc, {
+        hash: resolveTx,
+      });
 
       console.log("Resolve tx", resolveTx);
 
       // should fail, because the fan didn't win
       const claimWinningsTx = await decentralizedBetting.write.claimWinnings(
-        [BigInt(9)],
+        [BigInt(1)],
         {
           account: fan1.account,
         },
@@ -254,7 +258,7 @@ describe("DecentralizedBetting", function () {
 
       // should work, because the fan won
       const claimWinningsTx2 = await decentralizedBetting.write.claimWinnings(
-        [BigInt(9)],
+        [BigInt(1)],
         {
           account: fan2.account,
         },
@@ -264,7 +268,7 @@ describe("DecentralizedBetting", function () {
 
       // should fail, because the fan didn't win
       const claimWinningsTx3 = await decentralizedBetting.write.claimWinnings(
-        [BigInt(9)],
+        [BigInt(1)],
         {
           account: fan3.account,
         },
