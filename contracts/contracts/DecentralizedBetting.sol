@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 interface ISocialOracle {
     function addQuestion(uint256 _id, uint256 _deadline) external;
     function getQuestionOutcome(uint256 _questionId) external view returns (bool outcome, bool determined);
@@ -29,6 +31,7 @@ contract DecentralizedBetting {
 
     address public owner;
     uint256 private nextEventId;
+    IERC20 public bettingToken; // ERC20 token for betting
 
     mapping(uint256 => Event) public events;
     mapping(uint256 => mapping(address => Bet)) public bets;
@@ -36,11 +39,12 @@ contract DecentralizedBetting {
     address public socialOracleAddress;
     address public matchNFTAddress;
 
-    constructor(address _socialOracleAddress, address _matchNFTAddress) {
+    constructor(address _socialOracleAddress, address _matchNFTAddress, address _bettingTokenAddress) {
         owner = msg.sender;
         nextEventId = 1;
         socialOracleAddress = _socialOracleAddress;
         matchNFTAddress = _matchNFTAddress;
+        bettingToken = IERC20(_bettingTokenAddress);
     }
 
 
@@ -66,20 +70,20 @@ contract DecentralizedBetting {
     }
 
 
-    function placeBet(uint256 eventId, bool prediction) external payable eventNotResolved(eventId) {
+    function placeBet(uint256 eventId, bool prediction, uint256 amount) external eventNotResolved(eventId) {
         require(!events[eventId].emergencyStop, "Betting is temporarily suspended.");
-        require(msg.value > 0, "Bet amount must be greater than 0.");
+        require(bettingToken.transferFrom(msg.sender, address(this), amount), "Failed to transfer bet tokens.");
         require(bets[eventId][msg.sender].amount == 0, "User has already placed a bet.");
         require(events[eventId].id != 0, "Invalid event ID.");
 
         bets[eventId][msg.sender] = Bet({
-            amount: msg.value,
+            amount: amount,
             prediction: prediction
         });
 
-        events[eventId].totalPot += msg.value;
+        events[eventId].totalPot += amount;
         if (prediction) {
-            events[eventId].winningPot += msg.value;
+            events[eventId].winningPot += amount;
         }
     }
 
@@ -101,15 +105,27 @@ contract DecentralizedBetting {
         Bet storage bet = bets[eventId][msg.sender];
         require(bet.amount > 0, "User has no bet to claim.");
 
+        uint256 winnings = 0;
+
         if (bet.prediction == events[eventId].outcome) {
+            // Calculate the user's share of the winnings
             uint256 totalPot = events[eventId].totalPot;
             uint256 winningPot = events[eventId].winningPot;
-            uint256 winnings = (bet.amount * totalPot) / winningPot;
+            if (winningPot > 0) { // Ensure there is no division by zero
+                winnings = (bet.amount * totalPot) / winningPot;
+            }
 
+            // Reset the bet amount to prevent reclamation
             bet.amount = 0;
-            require(address(this).balance >= winnings, "Insufficient contract balance to pay out winnings.");
-            payable(msg.sender).transfer(winnings);
+
+            // Ensure the contract has enough tokens to pay out the winnings
+            uint256 contractTokenBalance = bettingToken.balanceOf(address(this));
+            require(contractTokenBalance >= winnings, "Insufficient contract token balance to pay out winnings.");
+
+            // Transfer the winnings to the user
+            require(bettingToken.transfer(msg.sender, winnings), "Failed to transfer winnings.");
         } else {
+            // If the user didn't win, just reset their bet
             bet.amount = 0;
         }
     }
@@ -119,7 +135,8 @@ contract DecentralizedBetting {
     }
 
     function withdraw() external onlyOwner {
-        uint256 amount = address(this).balance;
-        payable(owner).transfer(amount);
+        uint256 amount = bettingToken.balanceOf(address(this));
+        require(bettingToken.transfer(owner, amount), "Failed to transfer tokens.");
+
     }
 }

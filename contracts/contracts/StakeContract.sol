@@ -2,85 +2,66 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./BetStakingToken.sol";
 
-contract StakeContract is Ownable {
-    IERC20 public token;
+interface IStakeContract {
+    function getStakeAmount(address user) external view returns (uint256);
+    function penalize(address user) external;
+}
+
+contract StakeContract is IStakeContract, Ownable {
+    IERC20 public stakingToken;
+    IERC20 public liquidityToken;
+    BetStakingToken public betStakingToken;
+    address public treasuryAddress;
     uint256 public totalStaked;
-    uint256 public stakingRewardRate; // Reward rate per second
-    uint256 public lastUpdateTime;
+    uint256 public penaltyRate; // A percentage of the staked amount to be burned as penalty
 
-    mapping(address => uint256) public stakes;
-    mapping(address => uint256) public rewards;
+    event Staked(address indexed user, uint256 stakeAmount, uint256 liquidityAmount);
+    event Withdrawn(address indexed user, uint256 stakeAmount, uint256 liquidityAmount);
+    event Penalized(address indexed user, uint256 penaltyAmount);
 
-    event Staked(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
-    event RewardPaid(address indexed user, uint256 reward);
-
-    constructor(address _tokenAddress, uint256 _stakingRewardRate) {
-        token = IERC20(_tokenAddress);
-        stakingRewardRate = _stakingRewardRate;
+    constructor(address _betStakingToken, address _liquidityTokenAddress, address _stakingTokenAddress, address _treasuryAddress, uint256 _penaltyRate) {
+        stakingToken = IERC20(_stakingTokenAddress);
+        liquidityToken = IERC20(_liquidityTokenAddress);
+        betStakingToken = BetStakingToken(_betStakingToken);
+        treasuryAddress = _treasuryAddress;
+        penaltyRate = _penaltyRate;
     }
 
-    // Function to stake tokens
-    function stake(uint256 amount) external {
-        require(amount > 0, "Amount must be greater than 0");
-        updateReward(msg.sender);
-        token.transferFrom(msg.sender, address(this), amount);
-        stakes[msg.sender] += amount;
-        totalStaked += amount;
-        emit Staked(msg.sender, amount);
+    function stake(uint256 stakeAmount, uint256 liquidityAmount) external {
+        require(stakeAmount > 0 && liquidityAmount > 0, "Amounts must be greater than 0");
+        stakingToken.transferFrom(msg.sender, address(this), stakeAmount);
+        liquidityToken.transferFrom(msg.sender, treasuryAddress, liquidityAmount);
+
+        betStakingToken.mint(msg.sender, stakeAmount); // Assume 1:1 ratio for simplicity
+        totalStaked += stakeAmount;
+
+        emit Staked(msg.sender, stakeAmount, liquidityAmount);
     }
 
-    // Function to withdraw staked tokens
-    function withdraw(uint256 amount) external {
-        require(amount > 0, "Amount must be greater than 0");
-        require(stakes[msg.sender] >= amount, "Insufficient stake");
-        updateReward(msg.sender);
-        stakes[msg.sender] -= amount;
-        totalStaked -= amount;
-        token.transfer(msg.sender, amount);
-        emit Withdrawn(msg.sender, amount);
+    function withdraw(uint256 stakeAmount) external {
+        require(stakeAmount > 0, "Amount must be greater than 0");
+        betStakingToken.burnFrom(msg.sender, stakeAmount);
+
+        stakingToken.transfer(msg.sender, stakeAmount);
+        emit Withdrawn(msg.sender, stakeAmount, 0); // Update with actual liquidity amount returned if applicable
     }
 
-    // Function to claim rewards
-    function claimReward() external {
-        updateReward(msg.sender);
-        uint256 reward = rewards[msg.sender];
-        require(reward > 0, "No rewards to claim");
-        rewards[msg.sender] = 0;
-        token.transfer(msg.sender, reward);
-        emit RewardPaid(msg.sender, reward);
-    }
-
-    // Internal function to update rewards
-    function updateReward(address account) internal {
-        uint256 newRewardPerToken = rewardPerToken();
-        rewards[account] = earned(account, newRewardPerToken);
-        lastUpdateTime = block.timestamp;
-    }
-
-    // View function to get the staked amount of a user
     function getStakeAmount(address user) external view returns (uint256) {
-        return stakes[user];
+        return betStakingToken.balanceOf(user);
     }
 
-    // View function to get the earned rewards of a user
-    function earned(address account, uint256 newRewardPerToken) public view returns (uint256) {
-        uint256 lastRewardPerToken = rewardPerToken();
-        return stakes[account] * (newRewardPerToken - lastRewardPerToken) / 1e18 + rewards[account];
-    }
-
-    // Internal function to calculate the reward per token
-    function rewardPerToken() public view returns (uint256) {
-        if (totalStaked == 0) {
-            return 0;
-        }
-        return stakingRewardRate * (block.timestamp - lastUpdateTime) / totalStaked;
-    }
-
-    // Function to set the staking reward rate (owner only)
-    function setStakingRewardRate(uint256 _stakingRewardRate) external onlyOwner {
-        stakingRewardRate = _stakingRewardRate;
+    function penalize(address user) external onlyOwner {
+        uint256 stakeAmount = betStakingToken.balanceOf(user);
+        uint256 penaltyAmount = stakeAmount * penaltyRate / 100;
+        betStakingToken.burnFrom(user, penaltyAmount);
+        emit Penalized(user, penaltyAmount);
     }
 }
+

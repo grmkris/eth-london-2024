@@ -5,11 +5,14 @@
 
 import "hardhat/types/artifacts";
 
+import { IStakeContract$Type } from "./IStakeContract";
 import { StakeContract$Type } from "./StakeContract";
 
 declare module "hardhat/types/artifacts" {
   interface ArtifactsMap {
+    ["IStakeContract"]: IStakeContract$Type;
     ["StakeContract"]: StakeContract$Type;
+    ["contracts/StakeContract.sol:IStakeContract"]: IStakeContract$Type;
     ["contracts/StakeContract.sol:StakeContract"]: StakeContract$Type;
   }
 }
