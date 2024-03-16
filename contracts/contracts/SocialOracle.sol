@@ -78,10 +78,10 @@ contract SocialOracle {
 
 
         // Optionally penalize incorrect stakers here or leave it to the staking contract
-        for (uint256 i = 0; i < stats.totalA + stats.totalB; i++) {
-            // This pseudocode represents iterating over all answers and penalizing incorrect ones
-            // Solidity doesn't allow this directly; you'd need a way to track all staker addresses
-        }
+//        for (uint256 i = 0; i < stats.totalA + stats.totalB; i++) {
+//            // This pseudocode represents iterating over all answers and penalizing incorrect ones
+//            // Solidity doesn't allow this directly; you'd need a way to track all staker addresses
+//        }
     }
 
     // Additional functions like checking answer correctness or penalizing incorrect answers could go here

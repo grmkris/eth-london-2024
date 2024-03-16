@@ -612,8 +612,8 @@
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/SocialOracle.sol": {
-      "lastModificationDate": 1710596963530,
-      "contentHash": "003d3375f1857a66a7d32020a9a9b744",
+      "lastModificationDate": 1710599246609,
+      "contentHash": "6d966cc2c5396f312906847669beb747",
       "sourceName": "contracts/SocialOracle.sol",
       "solcConfig": {
         "version": "0.8.24",
