@@ -6,6 +6,10 @@ import hre from "hardhat";
 
 import DecentralizedBettingModule from "../ignition/modules/DecentralizedBettingModule";
 import { expect } from "chai";
+import { createWalletClient, formatEther } from "viem";
+import { ENV } from "../env";
+import { mnemonicToAccount } from "viem/accounts";
+import { waitForTransactionReceipt } from "viem/actions";
 
 describe("DecentralizedBetting", function () {
   async function deployDecentralizedBettingFixture() {
@@ -46,6 +50,13 @@ describe("DecentralizedBetting", function () {
 
   describe("Functionality", function () {
     it("Should allow creating an event", async function () {
+      const publicClient = await hre.viem.getPublicClient();
+      const [admin, fan1, fan2, fan3, staker1, staker2] =
+        await hre.viem.getWalletClients();
+      if (!admin || !fan1 || !fan2 || !fan3 || !staker1 || !staker2) {
+        throw new Error("Could not get wallet clients");
+      }
+
       const {
         decentralizedBetting,
         owner,
@@ -70,10 +81,57 @@ describe("DecentralizedBetting", function () {
       // check that nft was minted for nft
 
       const nft = await matchNFT.read.ownerOf([BigInt(1)]);
-      expect(nft).to.equal(owner?.account.address);
+      expect(nft.toLowerCase()).to.equal(owner?.account.address.toLowerCase());
 
       // check that question was created for social oracle
       const question = await socialOracle.read.questions([BigInt(1)]);
+
+      console.log("Question", question);
+
+      const betTx = await decentralizedBetting.write.placeBet(
+        [BigInt(1), false],
+        { account: fan1.account, value: BigInt(50000) },
+      );
+
+      console.log("Bet tx", betTx);
+      const betTx2 = await decentralizedBetting.write.placeBet(
+        [BigInt(1), true],
+        { account: fan2.account, value: BigInt(50000) },
+      );
+
+      console.log("Bet tx 2", betTx2);
+
+      const betTx3 = await decentralizedBetting.write.placeBet(
+        [BigInt(1), false],
+        { account: fan3.account, value: BigInt(50000) },
+      );
+
+      console.log("Bet tx 3", betTx3);
+
+      const oracleTx1 = await socialOracle.write.submitAnswer(
+        [BigInt(1), true],
+        { account: staker1.account },
+      );
+
+      console.log("oracletx1", oracleTx1);
+
+      const oracleTx2 = await socialOracle.write.submitAnswer(
+        [BigInt(1), false],
+        { account: staker2.account },
+      );
+
+      console.log("oracletx2", oracleTx2);
+
+      const determineAnswerOracle =
+        await socialOracle.write.determineCorrectAnswer([BigInt(1)]);
+
+      console.log("determineAnswerOracle", determineAnswerOracle);
+
+      const resolveTx = await decentralizedBetting.write.resolveEvent([
+        BigInt(1),
+      ]);
+
+      console.log("Resolve tx", resolveTx);
     });
 
     // Add more functionality tests here, such as placing bets, resolving events, claiming winnings, etc.

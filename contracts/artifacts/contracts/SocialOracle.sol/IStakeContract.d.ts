@@ -53,24 +53,11 @@ export interface IStakeContract$Type {
 
 declare module "@nomicfoundation/hardhat-viem/types" {
   export function deployContract(
-    contractName: "IStakeContract",
-    constructorArgs?: [],
-    config?: DeployContractConfig
-  ): Promise<GetContractReturnType<IStakeContract$Type["abi"]>>;
-  export function deployContract(
     contractName: "contracts/SocialOracle.sol:IStakeContract",
     constructorArgs?: [],
     config?: DeployContractConfig
   ): Promise<GetContractReturnType<IStakeContract$Type["abi"]>>;
 
-  export function sendDeploymentTransaction(
-    contractName: "IStakeContract",
-    constructorArgs?: [],
-    config?: SendDeploymentTransactionConfig
-  ): Promise<{
-    contract: GetContractReturnType<IStakeContract$Type["abi"]>;
-    deploymentTransaction: GetTransactionReturnType;
-  }>;
   export function sendDeploymentTransaction(
     contractName: "contracts/SocialOracle.sol:IStakeContract",
     constructorArgs?: [],
@@ -80,11 +67,6 @@ declare module "@nomicfoundation/hardhat-viem/types" {
     deploymentTransaction: GetTransactionReturnType;
   }>;
 
-  export function getContractAt(
-    contractName: "IStakeContract",
-    address: Address,
-    config?: GetContractAtConfig
-  ): Promise<GetContractReturnType<IStakeContract$Type["abi"]>>;
   export function getContractAt(
     contractName: "contracts/SocialOracle.sol:IStakeContract",
     address: Address,

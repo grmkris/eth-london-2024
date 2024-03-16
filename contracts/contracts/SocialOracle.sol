@@ -66,7 +66,7 @@ contract SocialOracle {
     function determineCorrectAnswer(uint256 _questionId) external {
         // Access control checks here
         Question storage question = questions[_questionId];
-        require(question.deadline < block.timestamp, "Still open for answers");
+        // require(question.deadline < block.timestamp, "Still open for answers");
         require(!question.answerDetermined, "Answer already determined");
 
         AnswerStats storage stats = answerStats[_questionId];
@@ -75,6 +75,7 @@ contract SocialOracle {
         question.answerDetermined = true;
 
         emit QuestionAnswered(_questionId, question.correctAnswer);
+
 
         // Optionally penalize incorrect stakers here or leave it to the staking contract
         for (uint256 i = 0; i < stats.totalA + stats.totalB; i++) {

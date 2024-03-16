@@ -85,7 +85,7 @@ contract DecentralizedBetting {
 
     function resolveEvent(uint256 eventId) external onlyOwner eventNotResolved(eventId) {
         require(events[eventId].id != 0, "Invalid event ID.");
-        require(block.timestamp >= events[eventId].timestamp, "Event has not occurred yet.");
+        // require(block.timestamp >= events[eventId].timestamp, "Event has not occurred yet.");
 
         // Get outcome from SocialOracle
         (bool outcome, bool determined) = ISocialOracle(socialOracleAddress).getQuestionOutcome(eventId);

@@ -16,7 +16,7 @@ const DecentralizedBettingModule = buildModule(
     // Deploy the DecentralizedBetting contract with the specified addresses.
     const decentralizedBetting = moduleBuilder.contract(
       "DecentralizedBetting",
-      [matchNFT, socialOracle],
+      [socialOracle, matchNFT],
     );
 
     return { decentralizedBetting, matchNFT, socialOracle, stakeContract };
