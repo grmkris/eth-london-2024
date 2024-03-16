@@ -31,7 +31,7 @@ contract DecentralizedBetting {
 
     address public owner;
     uint256 private nextEventId;
-    IERC20 public bettingToken; // ERC20 token for betting
+    IERC20 public bettingToken; // ERC20 token for betting (liquidity token)
 
     mapping(uint256 => Event) public events;
     mapping(uint256 => mapping(address => Bet)) public bets;

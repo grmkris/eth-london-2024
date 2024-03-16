@@ -5,11 +5,11 @@
 
 import "hardhat/types/artifacts";
 
-import { TestStakingToken$Type } from "./TestStakingToken";
+import { TEST_StakingToken$Type } from "./TEST_StakingToken";
 
 declare module "hardhat/types/artifacts" {
   interface ArtifactsMap {
-    ["TestStakingToken"]: TestStakingToken$Type;
-    ["contracts/TEST_StakingToken.sol:TestStakingToken"]: TestStakingToken$Type;
+    ["TEST_StakingToken"]: TEST_StakingToken$Type;
+    ["contracts/TEST_StakingToken.sol:TEST_StakingToken"]: TEST_StakingToken$Type;
   }
 }

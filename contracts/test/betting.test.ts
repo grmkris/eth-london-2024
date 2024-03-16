@@ -6,95 +6,154 @@ import hre from "hardhat";
 
 import DecentralizedBettingModule from "../ignition/modules/DecentralizedBettingModule";
 import { expect } from "chai";
-import { createWalletClient, formatEther } from "viem";
-import { ENV } from "../env";
-import { mnemonicToAccount } from "viem/accounts";
 import { waitForTransactionReceipt } from "viem/actions";
 
-describe("DecentralizedBetting", function () {
-  async function deployDecentralizedBettingFixture() {
-    const [owner, otherAccount] = await hre.viem.getWalletClients();
+async function deployDecentralizedBettingFixture() {
+  const [owner, otherAccount] = await hre.viem.getWalletClients();
 
-    let decentralizedBetting, matchNFT, socialOracle, stakeContract;
+  let decentralizedBetting,
+    matchNFT,
+    socialOracle,
+    stakeContract,
+    treasuryContract,
+    betStakingToken,
+    TESTliquidtyToken,
+    TESTStakingToken;
 
-    // Check if not running on the Hardhat default network
+  // Check if not running on the Hardhat default network
 
-    // If on Hardhat network, deploy the contracts
-    const contracts = await hre.ignition.deploy(DecentralizedBettingModule, {
-      parameters: {
-        DecentralizedBettingModule: {
-          // Specify any module-specific parameters here
-        },
+  // If on Hardhat network, deploy the contracts
+  const contracts = await hre.ignition.deploy(DecentralizedBettingModule, {
+    parameters: {
+      DecentralizedBettingModule: {
+        // Specify any module-specific parameters here
       },
-    });
+    },
+  });
 
-    decentralizedBetting = contracts.decentralizedBetting;
-    matchNFT = contracts.matchNFT;
-    socialOracle = contracts.socialOracle;
-    stakeContract = contracts.stakeContract;
+  decentralizedBetting = contracts.decentralizedBetting;
+  matchNFT = contracts.matchNFT;
+  socialOracle = contracts.socialOracle;
+  stakeContract = contracts.stakeContract;
+  treasuryContract = contracts.treasuryContract;
+  betStakingToken = contracts.betStakingToken;
+  TESTliquidtyToken = contracts.TESTliquidtyToken;
+  TESTStakingToken = contracts.TESTStakingToken;
 
-    return {
-      decentralizedBetting,
-      matchNFT,
-      socialOracle,
-      stakeContract,
-      owner,
-      otherAccount,
+  return {
+    decentralizedBetting,
+    matchNFT,
+    socialOracle,
+    stakeContract,
+    owner,
+    otherAccount,
+    treasuryContract,
+    betStakingToken,
+    TESTliquidtyToken,
+    TESTStakingToken,
+  };
+}
+
+type Fixture = Awaited<ReturnType<typeof deployDecentralizedBettingFixture>>;
+async function initializeContracts() {
+  let decentralizedBetting: Fixture["decentralizedBetting"],
+    matchNFT: Fixture["matchNFT"],
+    socialOracle: Fixture["socialOracle"],
+    stakeContract: Fixture["stakeContract"],
+    tEST_LiqudityToken: Fixture["TESTliquidtyToken"],
+    tEST_StakingToken: Fixture["TESTStakingToken"],
+    treasuryContract: Fixture["treasuryContract"],
+    betStakingToken: Fixture["betStakingToken"];
+
+  const pc = await hre.viem.getPublicClient();
+  if (pc.chain.id !== 31337) {
+    console.log("Not running on Hardhat default network, reusing");
+    // Attempt to use existing contract addresses from environment variables or a config
+    const deployedAddresses = {
+      decentralizedBetting: "0xab1815ba62132B1E12eaa244C6b629070e328100",
+      matchNFT: "0x01A4c2f3eC2A506086cED32C15c49211f8E58527",
+      socialOracle: "0xa322a2f58bD32bBf054f171877Ed23d0395d0ed2",
+      stakeContract: "0xc4513603A38E438Dbd2e9750a89c25899896EDe6",
+      tEST_LiqudityToken: "0xb9698522cB63101350379E703694F3325BA4B089",
+      tEST_StakingToken: "0x98450B10D6B982d11df956169EB76792A45FDc47",
+      treasuryContract: "0xbB4b257F8cACF09949D4443221fC50c78C8E364B",
+      betStakingToken: "0xE9C17E4AE48BFD39937cef331FBf286BCb90CF62",
     };
+
+    decentralizedBetting = await hre.viem.getContractAt(
+      "DecentralizedBetting",
+      deployedAddresses.decentralizedBetting,
+    );
+    matchNFT = await hre.viem.getContractAt(
+      "MatchNFT",
+      deployedAddresses.matchNFT,
+    );
+    socialOracle = await hre.viem.getContractAt(
+      "SocialOracle",
+      deployedAddresses.socialOracle,
+    );
+    stakeContract = await hre.viem.getContractAt(
+      "StakeContract",
+      deployedAddresses.stakeContract,
+    );
+    tEST_LiqudityToken = await hre.viem.getContractAt(
+      "TEST_LiqudityToken",
+      deployedAddresses.tEST_LiqudityToken,
+    );
+    tEST_StakingToken = await hre.viem.getContractAt(
+      "TEST_StakingToken",
+      deployedAddresses.tEST_StakingToken,
+    );
+    treasuryContract = await hre.viem.getContractAt(
+      "TreasuryContract",
+      deployedAddresses.treasuryContract,
+    );
+    betStakingToken = await hre.viem.getContractAt(
+      "BetStakingToken",
+      deployedAddresses.betStakingToken,
+    );
+  } else {
+    console.log("Running on Hardhat default network, deploying");
+    const fixture = await loadFixture(deployDecentralizedBettingFixture);
+    decentralizedBetting = fixture.decentralizedBetting;
+    matchNFT = fixture.matchNFT;
+    socialOracle = fixture.socialOracle;
+    stakeContract = fixture.stakeContract;
+    tEST_LiqudityToken = fixture.TESTliquidtyToken;
+    tEST_StakingToken = fixture.TESTStakingToken;
+    treasuryContract = fixture.treasuryContract;
+    betStakingToken = fixture.betStakingToken;
   }
 
+  if (
+    !decentralizedBetting ||
+    !matchNFT ||
+    !socialOracle ||
+    !stakeContract ||
+    !tEST_LiqudityToken ||
+    !tEST_StakingToken ||
+    !treasuryContract ||
+    !betStakingToken
+  ) {
+    throw new Error("Could not initialize contracts");
+  }
+  return {
+    decentralizedBetting,
+    matchNFT,
+    socialOracle,
+    stakeContract,
+    tEST_LiqudityToken,
+    tEST_StakingToken,
+    treasuryContract,
+    betStakingToken,
+  };
+}
+
+describe("DecentralizedBetting", function () {
   describe("Deployment", function () {
     it("Should correctly deploy all contracts", async function () {
-      let decentralizedBetting, matchNFT, socialOracle, stakeContract;
-      const pc = await hre.viem.getPublicClient();
-      if (pc.chain.id !== 31337) {
-        console.log("Not running on Hardhat default network, reusing");
-        // Attempt to use existing contract addresses from environment variables or a config
-        const deployedAddresses = {
-          decentralizedBetting: "0x62A6f3DA5357F0E541F46a2B02a23c430cDECde5",
-          matchNFT: "0x3301d66aE591355D67Cd9987aEfcA914004A65BD",
-          socialOracle: "0x2b1DF9f0eC7A6b03d1B664871c667ba718404ee1",
-          stakeContract: "0x65e63f6Ae6f5758cFCa2F37F3F76013bb7154382",
-        };
-
-        // Instantiate contracts from deployed addresses if they are set
-        if (
-          deployedAddresses.decentralizedBetting &&
-          deployedAddresses.matchNFT &&
-          deployedAddresses.socialOracle &&
-          deployedAddresses.stakeContract
-        ) {
-          decentralizedBetting = await hre.viem.getContractAt(
-            "DecentralizedBetting",
-            deployedAddresses.decentralizedBetting,
-          );
-          matchNFT = await hre.viem.getContractAt(
-            "MatchNFT",
-            deployedAddresses.matchNFT,
-          );
-          socialOracle = await hre.viem.getContractAt(
-            "SocialOracle",
-            deployedAddresses.socialOracle,
-          );
-          stakeContract = await hre.viem.getContractAt(
-            "MockStakeContract",
-            deployedAddresses.stakeContract,
-          );
-        } else {
-          console.error(
-            "Missing contract addresses in the environment for the current network.",
-          );
-          process.exit(1);
-        }
-      } else {
-        console.log("Running on Hardhat default network, deploying");
-        const fixture = await loadFixture(deployDecentralizedBettingFixture);
-        decentralizedBetting = fixture.decentralizedBetting;
-        matchNFT = fixture.matchNFT;
-        socialOracle = fixture.socialOracle;
-        stakeContract = fixture.stakeContract;
-      }
-
+      const { decentralizedBetting, matchNFT, socialOracle, stakeContract } =
+        await initializeContracts();
       expect(decentralizedBetting.address).to.be.not.undefined;
       expect(matchNFT.address).to.be.not.undefined;
       expect(socialOracle.address).to.be.not.undefined;
@@ -112,64 +171,73 @@ describe("DecentralizedBetting", function () {
       if (!admin || !fan1 || !fan2 || !fan3 || !staker1 || !staker2) {
         throw new Error("Could not get wallet clients");
       }
-      console.log("Admin", admin.account.address);
-      let decentralizedBetting, matchNFT, socialOracle, stakeContract;
-      const pc = await hre.viem.getPublicClient();
-      if (pc.chain.id !== 31337) {
-        console.log("Not running on Hardhat default network, reusing");
-        // Attempt to use existing contract addresses from environment variables or a config
-        const deployedAddresses = {
-          decentralizedBetting: "0x62A6f3DA5357F0E541F46a2B02a23c430cDECde5",
-          matchNFT: "0x3301d66aE591355D67Cd9987aEfcA914004A65BD",
-          socialOracle: "0x2b1DF9f0eC7A6b03d1B664871c667ba718404ee1",
-          stakeContract: "0x65e63f6Ae6f5758cFCa2F37F3F76013bb7154382",
-        };
-
-        // Instantiate contracts from deployed addresses if they are set
-        if (
-          deployedAddresses.decentralizedBetting &&
-          deployedAddresses.matchNFT &&
-          deployedAddresses.socialOracle &&
-          deployedAddresses.stakeContract
-        ) {
-          decentralizedBetting = await hre.viem.getContractAt(
-            "DecentralizedBetting",
-            deployedAddresses.decentralizedBetting,
-          );
-          matchNFT = await hre.viem.getContractAt(
-            "MatchNFT",
-            deployedAddresses.matchNFT,
-          );
-          socialOracle = await hre.viem.getContractAt(
-            "SocialOracle",
-            deployedAddresses.socialOracle,
-          );
-          stakeContract = await hre.viem.getContractAt(
-            "MockStakeContract",
-            deployedAddresses.stakeContract,
-          );
-        } else {
-          console.error(
-            "Missing contract addresses in the environment for the current network.",
-          );
-          process.exit(1);
-        }
-      } else {
-        console.log("Running on Hardhat default network, deploying");
-        const fixture = await loadFixture(deployDecentralizedBettingFixture);
-        decentralizedBetting = fixture.decentralizedBetting;
-        matchNFT = fixture.matchNFT;
-        socialOracle = fixture.socialOracle;
-        stakeContract = fixture.stakeContract;
-      }
+      const {
+        decentralizedBetting,
+        matchNFT,
+        socialOracle,
+        stakeContract,
+        tEST_StakingToken,
+        tEST_LiqudityToken,
+        treasuryContract,
+        betStakingToken,
+      } = await initializeContracts();
 
       expect(decentralizedBetting.address).to.be.not.undefined;
       expect(matchNFT.address).to.be.not.undefined;
       expect(socialOracle.address).to.be.not.undefined;
       expect(stakeContract.address).to.be.not.undefined;
-
+      const pc = await hre.viem.getPublicClient();
       const timestamp =
         pc.chain.id === 31337 ? await time.latest() : Date.now();
+
+      /**
+       *  mint some liquidty and staking tokens to stakers
+       */
+
+      const mintLiquidity = await tEST_LiqudityToken.write.mint([
+        staker1.account.address,
+        BigInt(100000),
+      ]);
+      console.log("Mint liquidity tx", mintLiquidity);
+      const mintStaking = await tEST_StakingToken.write.mint([
+        staker1.account.address,
+        BigInt(100000),
+      ]);
+
+      console.log("Mint staking tx", mintStaking);
+
+      const mintLiquidity2 = await tEST_LiqudityToken.write.mint([
+        staker2.account.address,
+        BigInt(100000),
+      ]);
+
+      console.log("Mint liquidity tx 2", mintLiquidity2);
+
+      const mintStaking2 = await tEST_StakingToken.write.mint([
+        staker2.account.address,
+        BigInt(100000),
+      ]);
+
+      console.log("Mint staking tx 2", mintStaking2);
+
+      // mint some liquidty tokens to fans
+      const mintLiquidity3 = await tEST_LiqudityToken.write.mint([
+        fan1.account.address,
+        BigInt(100000),
+      ]);
+
+      console.log("Mint liquidity tx 3", mintLiquidity3);
+
+      const mintLiquidity4 = await tEST_LiqudityToken.write.mint([
+        fan2.account.address,
+        BigInt(100000),
+      ]);
+
+      console.log("Mint liquidity tx 4", mintLiquidity4);
+      const mintLiquidity5 = await tEST_LiqudityToken.write.mint([
+        fan3.account.address,
+        BigInt(100000),
+      ]);
 
       const event = await decentralizedBetting.write.createEvent([
         BigInt(timestamp),
@@ -193,32 +261,94 @@ describe("DecentralizedBetting", function () {
 
       console.log("Question", question);
 
+      // increase allowance for placng a bet
+      const approveTx = await tEST_LiqudityToken.write.approve(
+        [decentralizedBetting.address, BigInt(10000000)],
+        { account: fan1.account },
+      );
+
+      waitForTransactionReceipt(pc, {
+        hash: approveTx,
+      });
+
       const betTx = await decentralizedBetting.write.placeBet(
-        [BigInt(1), false],
-        { account: fan1.account, value: BigInt(50000) },
+        [BigInt(1), false, BigInt(100000)],
+        { account: fan1.account },
       );
 
       console.log("Bet tx 1", betTx);
+
+      const approveTx2 = await tEST_LiqudityToken.write.approve(
+        [decentralizedBetting.address, BigInt(100000)],
+        { account: fan2.account },
+      );
+
       const betTx2 = await decentralizedBetting.write.placeBet(
-        [BigInt(1), true],
-        { account: fan2.account, value: BigInt(50000) },
+        [BigInt(1), true, BigInt(50000)],
+        { account: fan2.account },
       );
 
       console.log("Bet tx 2", betTx2);
 
+      const approveTx3 = await tEST_LiqudityToken.write.approve(
+        [decentralizedBetting.address, BigInt(100000)],
+        { account: fan3.account },
+      );
+
       const betTx3 = await decentralizedBetting.write.placeBet(
-        [BigInt(1), false],
-        { account: fan3.account, value: BigInt(50000) },
+        [BigInt(1), false, BigInt(50000)],
+        { account: fan3.account },
       );
 
       console.log("Bet tx 3", betTx3);
 
-      const oracleTx1 = await socialOracle.write.submitAnswer(
-        [BigInt(1), true],
+      // approve the staking and liq tokens to stake
+      const approveTx4 = await tEST_StakingToken.write.approve(
+        [stakeContract.address, BigInt(100000)],
         { account: staker1.account },
       );
+      const approveTx5 = await tEST_LiqudityToken.write.approve(
+        [stakeContract.address, BigInt(100000)],
+        { account: staker1.account },
+      );
+      // stake
+      const stakeTx = await stakeContract.write.stake(
+        [BigInt(100000), BigInt(100000)],
+        {
+          account: staker1.account,
+        },
+      );
 
-      console.log("oracletx1", oracleTx1);
+      console.log("staker1", {
+        approveTx4,
+        approveTx5,
+        stakeTx,
+      });
+
+      // repeat for staker 2
+
+      const approveTx6 = await tEST_StakingToken.write.approve(
+        [stakeContract.address, BigInt(100000)],
+        { account: staker2.account },
+      );
+
+      const approveTx7 = await tEST_LiqudityToken.write.approve(
+        [stakeContract.address, BigInt(100000)],
+        { account: staker2.account },
+      );
+
+      const stakeTx2 = await stakeContract.write.stake(
+        [BigInt(100000), BigInt(100000)],
+        {
+          account: staker2.account,
+        },
+      );
+
+      console.log("staker2", {
+        approveTx6,
+        approveTx7,
+        stakeTx2,
+      });
 
       const oracleTx2 = await socialOracle.write.submitAnswer(
         [BigInt(1), true],

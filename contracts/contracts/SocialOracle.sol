@@ -43,7 +43,7 @@ contract SocialOracle {
 
     function submitAnswer(uint256 _questionId, bool _answer) external {
         Question storage question = questions[_questionId];
-        require(question.deadline > block.timestamp, "Deadline has passed");
+        // require(question.deadline > block.timestamp, "Deadline has passed");
         require(stakeContract.getStakeAmount(msg.sender) >= 100, "Not enough tokens staked");
         require(!hasAnswered[_questionId][msg.sender], "Already answered");
 

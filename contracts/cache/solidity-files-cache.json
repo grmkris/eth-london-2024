@@ -362,8 +362,8 @@
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/TreasuryContract.sol": {
-      "lastModificationDate": 1710612251117,
-      "contentHash": "eeceb8027b79f5a009e29a1b2ac76014",
+      "lastModificationDate": 1710613517249,
+      "contentHash": "1d1328ea430809fd281a55169392d107",
       "sourceName": "contracts/TreasuryContract.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -406,8 +406,8 @@
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/TEST_StakingToken.sol": {
-      "lastModificationDate": 1710613075406,
-      "contentHash": "66267d217ad01986fde71594c974494b",
+      "lastModificationDate": 1710614036043,
+      "contentHash": "36823c70c05c46df396d8a8db0f3aba8",
       "sourceName": "contracts/TEST_StakingToken.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -448,7 +448,7 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "TestStakingToken"
+        "TEST_StakingToken"
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/node_modules/.pnpm/@openzeppelin+contracts@4.9.6/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
@@ -934,8 +934,8 @@
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/TEST_LiqudityToken.sol": {
-      "lastModificationDate": 1710613068566,
-      "contentHash": "b9694474dcb73e16d2ed200642520c35",
+      "lastModificationDate": 1710614033351,
+      "contentHash": "5dd2b98d4219d269af6be0d8601514de",
       "sourceName": "contracts/TEST_LiqudityToken.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -976,12 +976,12 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "TestLiquidityToken"
+        "TEST_LiqudityToken"
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/DecentralizedBetting.sol": {
-      "lastModificationDate": 1710613024400,
-      "contentHash": "8a1d9097804b3fe81725e4bd976cbd1f",
+      "lastModificationDate": 1710615225102,
+      "contentHash": "9a7e1a7c54e0080f6e2a131688e68600",
       "sourceName": "contracts/DecentralizedBetting.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -1111,8 +1111,8 @@
       ]
     },
     "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/SocialOracle.sol": {
-      "lastModificationDate": 1710599246609,
-      "contentHash": "6d966cc2c5396f312906847669beb747",
+      "lastModificationDate": 1710615417423,
+      "contentHash": "af4b965fe35b607ddd0040220e853ed0",
       "sourceName": "contracts/SocialOracle.sol",
       "solcConfig": {
         "version": "0.8.24",

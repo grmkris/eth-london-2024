@@ -5,11 +5,11 @@
 
 import "hardhat/types/artifacts";
 
-import { TestLiquidityToken$Type } from "./TestLiquidityToken";
+import { TEST_LiqudityToken$Type } from "./TEST_LiqudityToken";
 
 declare module "hardhat/types/artifacts" {
   interface ArtifactsMap {
-    ["TestLiquidityToken"]: TestLiquidityToken$Type;
-    ["contracts/TEST_LiqudityToken.sol:TestLiquidityToken"]: TestLiquidityToken$Type;
+    ["TEST_LiqudityToken"]: TEST_LiqudityToken$Type;
+    ["contracts/TEST_LiqudityToken.sol:TEST_LiqudityToken"]: TEST_LiqudityToken$Type;
   }
 }
