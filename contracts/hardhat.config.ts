@@ -30,7 +30,7 @@ const config: HardhatUserConfig = {
     mumbai: {
       url: ENV.MUMBAI_URL,
       accounts: {
-        mnemonic: ENV.DEPLOYER_MNEMONIC,
+        mnemonic: ENV.MNEMONIC,
       },
     },
   },

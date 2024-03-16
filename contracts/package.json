@@ -1,23 +1,14 @@
 {
-  "name": "@acme/contracts",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
+  "name": "komerze-contracts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./sdk/index.ts"
   },
-  "license": "MIT",
   "scripts": {
-    "clean": "rm -rf .turbo node_modules",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@openzeppelin/contracts": "4.9.6",
-    "@uniswap/universal-router": "^1.6.0",
-    "abitype": "^1.0.1",
-    "solmate": "^6.2.0"
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "accounts": "hardhat accounts",
+    "accounts:mumbai": "hardhat accounts --network mumbai",
+    "test:mumbai": "hardhat test --network mumbai"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.14.0",
@@ -29,13 +20,15 @@
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.1",
     "dotenv": "^16.4.5",
-    "eslint": "^8.57.0",
-    "hardhat": "^2.21.0",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.2",
-    "viem": "^2.7.20",
+    "hardhat": "^2.20.1",
+    "viem": "^2.7.18",
     "znv": "^0.4.0",
     "zod": "^3.22.4"
   },
-  "prettier": "@acme/prettier-config"
+  "dependencies": {
+    "@openzeppelin/contracts": "4.9.6",
+    "@uniswap/universal-router": "^1.6.0",
+    "abitype": "^1.0.1",
+    "solmate": "^6.2.0"
+  }
 }
