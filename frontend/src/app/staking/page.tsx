@@ -8,8 +8,6 @@ import { Label } from "~/components/ui/label";
 import { Card, CardHeader } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { Slider } from "~/components/ui/slider";
-import { useWriteDecentralizedBettingCreateEvent } from "~/generated";
 import { ADDRESSES } from "~/app/_components/MatchNFTs";
 import { useWriteStakeContractStake } from "~/generated";
 import { useQueryClient } from "@tanstack/react-query";
