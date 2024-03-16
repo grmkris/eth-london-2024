@@ -2,6 +2,7 @@
 import {
   useReadDecentralizedBettingBets,
   useReadDecentralizedBettingEvents,
+  useReadMatchNftTokenUri,
   useReadTestTokensAllowance,
   useReadTestTokensBalanceOf,
   useWriteDecentralizedBettingClaimWinnings,
@@ -18,7 +19,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { useAccount } from "wagmi";
 import { Address, formatEther, parseEther } from "viem";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import {
   Card,
@@ -28,6 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import Link from "next/link";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -152,8 +154,28 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
     args: [BigInt(id), address],
   });
   const claim = useWriteDecentralizedBettingClaimWinnings();
+  const tokenUri = useReadMatchNftTokenUri({
+    address: ADDRESSES["base-sepolia"].MatchNFT,
+    args: [BigInt(id)],
+  });
 
-  console.log("betStatus", betStatus);
+  const tokenMetadata = useQuery({
+    queryKey: ["matchNFT", id],
+    enabled: !!tokenUri?.data,
+    queryFn: async () => {
+      if (!tokenUri?.data) throw new Error("No token URI");
+      console.log("tokenUri", tokenUri);
+      const data = await fetch(tokenUri?.data);
+      const parsed = (await data.json()) as {
+        name: string;
+        description: string;
+        image: string;
+      };
+      return parsed;
+    },
+  });
+
+  console.log("betStatus", tokenMetadata.data);
 
   if (!mappedMatch?.timestamp) return null;
   return (
@@ -162,7 +184,20 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
         <CardTitle>
           <h1>Match NFT {id}</h1>
         </CardTitle>
-        <CardDescription></CardDescription>
+        <CardDescription>
+          <Link
+            href={
+              `https://testnets.opensea.io/assets/base-sepolia/${ADDRESSES["base-sepolia"].MatchNFT}/${id}` ??
+              ""
+            }
+          >
+            View on OpenSea
+          </Link>
+          <p>
+            {tokenMetadata?.data?.name ?? "Loading"} -{" "}
+            {tokenMetadata?.data?.description ?? "Loading"}
+          </p>
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -184,17 +219,20 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
         {mappedMatch.resolved ? (
           <>
             <div>Mach resolved</div>
-            <Button
-              onClick={async () => {
-                claim.writeContractAsync({
-                  address: ADDRESSES["base-sepolia"].DecentralizedBetting,
-                  args: [BigInt(id)],
-                });
-                await queryClient.invalidateQueries();
-              }}
-            >
-              Claim winnings
-            </Button>
+            {betStatus?.data?.[0] > 0 &&
+              mappedMatch.outcome === betStatus?.data?.[1] && (
+                <Button
+                  onClick={async () => {
+                    claim.writeContractAsync({
+                      address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+                      args: [BigInt(id)],
+                    });
+                    await queryClient.invalidateQueries();
+                  }}
+                >
+                  Claim winnings
+                </Button>
+              )}
           </>
         ) : (
           <>
@@ -297,12 +335,12 @@ export const ContractInteractions = () => {
 
   if (!account.address) return null;
   return (
-    <>
+    <div className="text-white">
       <TestnetTokens address={account.address} />
       <StakedTokens address={account.address} />
       <CreateMatchComponent />
       <MatchNFTs />
-    </>
+    </div>
   );
 };
 
@@ -321,31 +359,28 @@ export const TestnetTokens = (props: { address: Address }) => {
 
   return (
     <div>
-      Balance staking token:{" "}
-      {formatEther(balanceStaking?.data ?? BigInt(0)).toString()}
-      <Button
-        onClick={async () => {
-          mintStakingToken.writeContractAsync({
-            address: ADDRESSES["base-sepolia"].TEST_StakingToken,
-            args: [props.address, BigInt(1000000000000000000)],
-          });
-          await queryClient.invalidateQueries();
-        }}
-      >
-        Mint staking token
-      </Button>
-      Balance liquidty token:{" "}
-      {formatEther(balanceLiqudity?.data ?? BigInt(0)).toString()}
+      <p>
+        Balance staking token:{" "}
+        {formatEther(balanceStaking?.data ?? BigInt(0)).toString()}
+      </p>
+      <p>
+        Balance liquidty token:{" "}
+        {formatEther(balanceLiqudity?.data ?? BigInt(0)).toString()}
+      </p>
       <Button
         onClick={async () => {
           mintLiquidtyToken.writeContractAsync({
             address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
-            args: [props.address, BigInt(1000000000000000000)],
+            args: [props.address, BigInt("500000000000000000000")],
+          });
+          mintStakingToken.writeContractAsync({
+            address: ADDRESSES["base-sepolia"].TEST_StakingToken,
+            args: [props.address, BigInt("500000000000000000000")],
           });
           await queryClient.invalidateQueries();
         }}
       >
-        Mint liq token
+        Mint testnet tokens
       </Button>
     </div>
   );
