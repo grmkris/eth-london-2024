@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 interface ISocialOracle {
-    function addQuestion(uint256 _id, string memory _description, uint256 _deadline) external;
+    function addQuestion(uint256 _id, uint256 _deadline) external;
     function getQuestionOutcome(uint256 _questionId) external view returns (bool outcome, bool determined);
 }
 
@@ -54,14 +54,14 @@ contract DecentralizedBetting {
         _;
     }
 
-    function createEvent(uint256 timestamp, string memory description) external onlyOwner {
+    function createEvent(uint256 timestamp) external onlyOwner {
         uint256 eventId = nextEventId++;
         events[eventId].id = eventId;
         events[eventId].timestamp = timestamp;
 
         // Assuming SocialOracle has a function to add a question directly
         // and the deadline is set as the event's timestamp
-        ISocialOracle(socialOracleAddress).addQuestion(eventId, description, timestamp);
+        ISocialOracle(socialOracleAddress).addQuestion(eventId, timestamp);
         IMatchNFT(matchNFTAddress).mint(eventId, msg.sender);
     }
 

@@ -20,11 +20,6 @@ export interface ISocialOracle$Type {
           "type": "uint256"
         },
         {
-          "internalType": "string",
-          "name": "_description",
-          "type": "string"
-        },
-        {
           "internalType": "uint256",
           "name": "_deadline",
           "type": "uint256"

@@ -12,7 +12,8 @@
     "deploy:social-oracle": "npx hardhat ignition deploy ignition/modules/SocialOracleModule.ts",
     "deploy:decentralized-betting": "npx hardhat ignition deploy ignition/modules/DecentralizedBettingModule.ts",
     "accounts:mumbai": "hardhat accounts --network mumbai",
-    "test:mumbai": "hardhat test --network mumbai"
+    "test:mumbai": "hardhat test --network mumbai",
+    "test:betting": "hardhat test test/betting.test.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.14.0",
