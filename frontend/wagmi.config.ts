@@ -4,6 +4,7 @@ import { erc20Abi } from "viem";
 import { MatchNFTABI } from "~/lib/contracts/MatchNFTABI";
 import { DecentralizedBettingABI } from "~/lib/contracts/DecentralizedBettingABI";
 import { SocialOracleABI } from "~/lib/contracts/SocialOracleABI";
+import { TestTokensABI } from "~/lib/contracts/TestTokensABI";
 
 export default defineConfig({
   out: "src/generated.ts",
@@ -19,6 +20,10 @@ export default defineConfig({
     {
       name: "socialOracle",
       abi: SocialOracleABI,
+    },
+    {
+      name: "testTokens",
+      abi: TestTokensABI,
     },
   ],
   plugins: [react()],

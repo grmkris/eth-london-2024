@@ -18,7 +18,10 @@ import {
   CreateMatchComponent,
   MatchNFT,
   MatchNFTs,
+  MintTestnetTokens,
+  TestnetTokens,
 } from "~/app/_components/MatchNFTs";
+import { useAccount } from "wagmi";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -28,6 +31,7 @@ export default async function Home() {
       <w3m-button />
       <MatchNFTs />
       <CreateMatchComponent />
+      <TestnetTokens />
       <div className="grid gap-6 sm:grid-cols-1 lg:max-w-[70%] lg:grid-cols-1 xl:grid-cols-1">
         <Card>
           <CardHeader>

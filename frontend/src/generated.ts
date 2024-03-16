@@ -19,6 +19,11 @@ export const decentralizedBettingAbi = [
         type: 'address',
       },
       { name: '_matchNFTAddress', internalType: 'address', type: 'address' },
+      {
+        name: '_bettingTokenAddress',
+        internalType: 'address',
+        type: 'address',
+      },
     ],
     stateMutability: 'nonpayable',
   },
@@ -33,6 +38,13 @@ export const decentralizedBettingAbi = [
       { name: 'amount', internalType: 'uint256', type: 'uint256' },
       { name: 'prediction', internalType: 'bool', type: 'bool' },
     ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'bettingToken',
+    outputs: [{ name: '', internalType: 'contract IERC20', type: 'address' }],
     stateMutability: 'view',
   },
   {
@@ -83,10 +95,11 @@ export const decentralizedBettingAbi = [
     inputs: [
       { name: 'eventId', internalType: 'uint256', type: 'uint256' },
       { name: 'prediction', internalType: 'bool', type: 'bool' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'placeBet',
     outputs: [],
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -326,135 +339,227 @@ export const matchNftAbi = [
 
 export const socialOracleAbi = [
   {
-    type: 'constructor',
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'getStakeAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'penalize',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// testTokens
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const testTokensAbi = [
+  { type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
+  {
+    type: 'event',
+    anonymous: false,
     inputs: [
       {
-        name: '_stakeContractAddress',
+        name: 'owner',
         internalType: 'address',
         type: 'address',
-      },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'questionId',
-        internalType: 'uint256',
-        type: 'uint256',
         indexed: true,
       },
-      { name: 'user', internalType: 'address', type: 'address', indexed: true },
-      { name: 'answer', internalType: 'bool', type: 'bool', indexed: false },
-    ],
-    name: 'AnswerSubmitted',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
       {
-        name: 'correctAnswer',
-        internalType: 'bool',
-        type: 'bool',
-        indexed: false,
+        name: 'spender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
       },
-    ],
-    name: 'QuestionAnswered',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
       {
-        name: 'deadline',
+        name: 'value',
         internalType: 'uint256',
         type: 'uint256',
         indexed: false,
       },
     ],
-    name: 'QuestionCreated',
+    name: 'Approval',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'previousOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'newOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'OwnershipTransferred',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'value',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Transfer',
   },
   {
     type: 'function',
     inputs: [
-      { name: '_id', internalType: 'uint256', type: 'uint256' },
-      { name: '_deadline', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'spender', internalType: 'address', type: 'address' },
     ],
-    name: 'addQuestion',
+    name: 'allowance',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'approve',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'burn',
     outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'address', type: 'address' },
+      { name: 'account', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
     ],
-    name: 'answers',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: '_questionId', internalType: 'uint256', type: 'uint256' }],
-    name: 'determineCorrectAnswer',
+    name: 'burnFrom',
     outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [{ name: '_questionId', internalType: 'uint256', type: 'uint256' }],
-    name: 'getQuestionOutcome',
-    outputs: [
-      { name: 'outcome', internalType: 'bool', type: 'bool' },
-      { name: 'determined', internalType: 'bool', type: 'bool' },
-    ],
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'address', type: 'address' },
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'subtractedValue', internalType: 'uint256', type: 'uint256' },
     ],
-    name: 'hasAnswered',
+    name: 'decreaseAllowance',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'questions',
-    outputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256' },
-      { name: 'deadline', internalType: 'uint256', type: 'uint256' },
-      { name: 'isAnswered', internalType: 'bool', type: 'bool' },
-      { name: 'correctAnswer', internalType: 'bool', type: 'bool' },
-      { name: 'answerDetermined', internalType: 'bool', type: 'bool' },
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: 'addedValue', internalType: 'uint256', type: 'uint256' },
     ],
+    name: 'increaseAllowance',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'name',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [],
-    name: 'stakeContract',
-    outputs: [
-      { name: '', internalType: 'contract IStakeContract', type: 'address' },
-    ],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'symbol',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'totalSupply',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     inputs: [
-      { name: '_questionId', internalType: 'uint256', type: 'uint256' },
-      { name: '_answer', internalType: 'bool', type: 'bool' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
     ],
-    name: 'submitAnswer',
+    name: 'transfer',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'transferFrom',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
+    name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -478,6 +583,15 @@ export const useReadDecentralizedBettingBets =
   /*#__PURE__*/ createUseReadContract({
     abi: decentralizedBettingAbi,
     functionName: 'bets',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link decentralizedBettingAbi}__ and `functionName` set to `"bettingToken"`
+ */
+export const useReadDecentralizedBettingBettingToken =
+  /*#__PURE__*/ createUseReadContract({
+    abi: decentralizedBettingAbi,
+    functionName: 'bettingToken',
   })
 
 /**
@@ -869,45 +983,12 @@ export const useReadSocialOracle = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"answers"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"getStakeAmount"`
  */
-export const useReadSocialOracleAnswers = /*#__PURE__*/ createUseReadContract({
-  abi: socialOracleAbi,
-  functionName: 'answers',
-})
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"getQuestionOutcome"`
- */
-export const useReadSocialOracleGetQuestionOutcome =
+export const useReadSocialOracleGetStakeAmount =
   /*#__PURE__*/ createUseReadContract({
     abi: socialOracleAbi,
-    functionName: 'getQuestionOutcome',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"hasAnswered"`
- */
-export const useReadSocialOracleHasAnswered =
-  /*#__PURE__*/ createUseReadContract({
-    abi: socialOracleAbi,
-    functionName: 'hasAnswered',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"questions"`
- */
-export const useReadSocialOracleQuestions = /*#__PURE__*/ createUseReadContract(
-  { abi: socialOracleAbi, functionName: 'questions' },
-)
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"stakeContract"`
- */
-export const useReadSocialOracleStakeContract =
-  /*#__PURE__*/ createUseReadContract({
-    abi: socialOracleAbi,
-    functionName: 'stakeContract',
+    functionName: 'getStakeAmount',
   })
 
 /**
@@ -918,30 +999,12 @@ export const useWriteSocialOracle = /*#__PURE__*/ createUseWriteContract({
 })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"addQuestion"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"penalize"`
  */
-export const useWriteSocialOracleAddQuestion =
+export const useWriteSocialOraclePenalize =
   /*#__PURE__*/ createUseWriteContract({
     abi: socialOracleAbi,
-    functionName: 'addQuestion',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"determineCorrectAnswer"`
- */
-export const useWriteSocialOracleDetermineCorrectAnswer =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: socialOracleAbi,
-    functionName: 'determineCorrectAnswer',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"submitAnswer"`
- */
-export const useWriteSocialOracleSubmitAnswer =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: socialOracleAbi,
-    functionName: 'submitAnswer',
+    functionName: 'penalize',
   })
 
 /**
@@ -952,61 +1015,294 @@ export const useSimulateSocialOracle = /*#__PURE__*/ createUseSimulateContract({
 })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"addQuestion"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"penalize"`
  */
-export const useSimulateSocialOracleAddQuestion =
+export const useSimulateSocialOraclePenalize =
   /*#__PURE__*/ createUseSimulateContract({
     abi: socialOracleAbi,
-    functionName: 'addQuestion',
+    functionName: 'penalize',
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"determineCorrectAnswer"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__
  */
-export const useSimulateSocialOracleDetermineCorrectAnswer =
+export const useReadTestTokens = /*#__PURE__*/ createUseReadContract({
+  abi: testTokensAbi,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"allowance"`
+ */
+export const useReadTestTokensAllowance = /*#__PURE__*/ createUseReadContract({
+  abi: testTokensAbi,
+  functionName: 'allowance',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"balanceOf"`
+ */
+export const useReadTestTokensBalanceOf = /*#__PURE__*/ createUseReadContract({
+  abi: testTokensAbi,
+  functionName: 'balanceOf',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"decimals"`
+ */
+export const useReadTestTokensDecimals = /*#__PURE__*/ createUseReadContract({
+  abi: testTokensAbi,
+  functionName: 'decimals',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"name"`
+ */
+export const useReadTestTokensName = /*#__PURE__*/ createUseReadContract({
+  abi: testTokensAbi,
+  functionName: 'name',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"owner"`
+ */
+export const useReadTestTokensOwner = /*#__PURE__*/ createUseReadContract({
+  abi: testTokensAbi,
+  functionName: 'owner',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"symbol"`
+ */
+export const useReadTestTokensSymbol = /*#__PURE__*/ createUseReadContract({
+  abi: testTokensAbi,
+  functionName: 'symbol',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"totalSupply"`
+ */
+export const useReadTestTokensTotalSupply = /*#__PURE__*/ createUseReadContract(
+  { abi: testTokensAbi, functionName: 'totalSupply' },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__
+ */
+export const useWriteTestTokens = /*#__PURE__*/ createUseWriteContract({
+  abi: testTokensAbi,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"approve"`
+ */
+export const useWriteTestTokensApprove = /*#__PURE__*/ createUseWriteContract({
+  abi: testTokensAbi,
+  functionName: 'approve',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"burn"`
+ */
+export const useWriteTestTokensBurn = /*#__PURE__*/ createUseWriteContract({
+  abi: testTokensAbi,
+  functionName: 'burn',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"burnFrom"`
+ */
+export const useWriteTestTokensBurnFrom = /*#__PURE__*/ createUseWriteContract({
+  abi: testTokensAbi,
+  functionName: 'burnFrom',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"decreaseAllowance"`
+ */
+export const useWriteTestTokensDecreaseAllowance =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: testTokensAbi,
+    functionName: 'decreaseAllowance',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"increaseAllowance"`
+ */
+export const useWriteTestTokensIncreaseAllowance =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: testTokensAbi,
+    functionName: 'increaseAllowance',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"mint"`
+ */
+export const useWriteTestTokensMint = /*#__PURE__*/ createUseWriteContract({
+  abi: testTokensAbi,
+  functionName: 'mint',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useWriteTestTokensRenounceOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: testTokensAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"transfer"`
+ */
+export const useWriteTestTokensTransfer = /*#__PURE__*/ createUseWriteContract({
+  abi: testTokensAbi,
+  functionName: 'transfer',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"transferFrom"`
+ */
+export const useWriteTestTokensTransferFrom =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: testTokensAbi,
+    functionName: 'transferFrom',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useWriteTestTokensTransferOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: testTokensAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__
+ */
+export const useSimulateTestTokens = /*#__PURE__*/ createUseSimulateContract({
+  abi: testTokensAbi,
+})
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"approve"`
+ */
+export const useSimulateTestTokensApprove =
   /*#__PURE__*/ createUseSimulateContract({
-    abi: socialOracleAbi,
-    functionName: 'determineCorrectAnswer',
+    abi: testTokensAbi,
+    functionName: 'approve',
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"submitAnswer"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"burn"`
  */
-export const useSimulateSocialOracleSubmitAnswer =
+export const useSimulateTestTokensBurn =
   /*#__PURE__*/ createUseSimulateContract({
-    abi: socialOracleAbi,
-    functionName: 'submitAnswer',
+    abi: testTokensAbi,
+    functionName: 'burn',
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"burnFrom"`
  */
-export const useWatchSocialOracleEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({ abi: socialOracleAbi })
-
-/**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__ and `eventName` set to `"AnswerSubmitted"`
- */
-export const useWatchSocialOracleAnswerSubmittedEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: socialOracleAbi,
-    eventName: 'AnswerSubmitted',
+export const useSimulateTestTokensBurnFrom =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'burnFrom',
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__ and `eventName` set to `"QuestionAnswered"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"decreaseAllowance"`
  */
-export const useWatchSocialOracleQuestionAnsweredEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: socialOracleAbi,
-    eventName: 'QuestionAnswered',
+export const useSimulateTestTokensDecreaseAllowance =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'decreaseAllowance',
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__ and `eventName` set to `"QuestionCreated"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"increaseAllowance"`
  */
-export const useWatchSocialOracleQuestionCreatedEvent =
+export const useSimulateTestTokensIncreaseAllowance =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'increaseAllowance',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"mint"`
+ */
+export const useSimulateTestTokensMint =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'mint',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useSimulateTestTokensRenounceOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"transfer"`
+ */
+export const useSimulateTestTokensTransfer =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'transfer',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"transferFrom"`
+ */
+export const useSimulateTestTokensTransferFrom =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'transferFrom',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link testTokensAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useSimulateTestTokensTransferOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: testTokensAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link testTokensAbi}__
+ */
+export const useWatchTestTokensEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({ abi: testTokensAbi })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link testTokensAbi}__ and `eventName` set to `"Approval"`
+ */
+export const useWatchTestTokensApprovalEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
-    abi: socialOracleAbi,
-    eventName: 'QuestionCreated',
+    abi: testTokensAbi,
+    eventName: 'Approval',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link testTokensAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ */
+export const useWatchTestTokensOwnershipTransferredEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: testTokensAbi,
+    eventName: 'OwnershipTransferred',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link testTokensAbi}__ and `eventName` set to `"Transfer"`
+ */
+export const useWatchTestTokensTransferEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: testTokensAbi,
+    eventName: 'Transfer',
   })
