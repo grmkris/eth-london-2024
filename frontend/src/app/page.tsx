@@ -9,17 +9,19 @@ import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
-import { Slider } from "../components/ui/slider";
+import { Slider } from "~/components/ui/slider";
 
 import { CreatePost } from "~/app/_components/create-post";
 import { api } from "~/trpc/server";
 import { HelloForm } from "~/app/_components/FormComponent";
+import { MatchNFT, MatchNFTs } from "~/app/_components/MatchNFTs";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <MatchNFTs />
       <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
         <Card>
           <CardHeader>
