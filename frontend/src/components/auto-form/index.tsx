@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 
 import type { FieldConfig } from "./types";
 import type { ZodObjectOrWrapped } from "./utils";
-import { cn } from "../../lib/utils";
+import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import AutoFormObject from "./fields/object";
