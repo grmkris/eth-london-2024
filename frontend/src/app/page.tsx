@@ -62,6 +62,7 @@ export default async function Home() {
               />
             </div>
             <Slider defaultValue={[33]} max={100} step={1} />
+            <Slider defaultValue={[33]} max={100} step={1} />
           </CardContent>
           <CardFooter>
             <Button variant="outline">Confirm</Button>
