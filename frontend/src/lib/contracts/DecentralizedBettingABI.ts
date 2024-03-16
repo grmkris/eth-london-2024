@@ -11,6 +11,11 @@ export const DecentralizedBettingABI = [
         name: "_matchNFTAddress",
         type: "address",
       },
+      {
+        internalType: "address",
+        name: "_bettingTokenAddress",
+        type: "address",
+      },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -39,6 +44,19 @@ export const DecentralizedBettingABI = [
         internalType: "bool",
         name: "prediction",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "bettingToken",
+    outputs: [
+      {
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -157,10 +175,15 @@ export const DecentralizedBettingABI = [
         name: "prediction",
         type: "bool",
       },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
     name: "placeBet",
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
