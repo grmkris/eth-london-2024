@@ -339,6 +339,247 @@ export const matchNftAbi = [
 
 export const socialOracleAbi = [
   {
+    type: 'constructor',
+    inputs: [
+      {
+        name: '_stakeContractAddress',
+        internalType: 'address',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'questionId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
+      { name: 'answer', internalType: 'bool', type: 'bool', indexed: false },
+    ],
+    name: 'AnswerSubmitted',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
+      {
+        name: 'correctAnswer',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+    ],
+    name: 'QuestionAnswered',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
+      {
+        name: 'deadline',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'QuestionCreated',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_id', internalType: 'uint256', type: 'uint256' },
+      { name: '_deadline', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'addQuestion',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'answers',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_questionId', internalType: 'uint256', type: 'uint256' }],
+    name: 'determineCorrectAnswer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_questionId', internalType: 'uint256', type: 'uint256' }],
+    name: 'getQuestionOutcome',
+    outputs: [
+      { name: 'outcome', internalType: 'bool', type: 'bool' },
+      { name: 'determined', internalType: 'bool', type: 'bool' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'hasAnswered',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'questions',
+    outputs: [
+      { name: 'id', internalType: 'uint256', type: 'uint256' },
+      { name: 'deadline', internalType: 'uint256', type: 'uint256' },
+      { name: 'isAnswered', internalType: 'bool', type: 'bool' },
+      { name: 'correctAnswer', internalType: 'bool', type: 'bool' },
+      { name: 'answerDetermined', internalType: 'bool', type: 'bool' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'stakeContract',
+    outputs: [
+      { name: '', internalType: 'contract IStakeContract', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_questionId', internalType: 'uint256', type: 'uint256' },
+      { name: '_answer', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'submitAnswer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// stakeContract
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const stakeContractAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_betStakingToken', internalType: 'address', type: 'address' },
+      {
+        name: '_liquidityTokenAddress',
+        internalType: 'address',
+        type: 'address',
+      },
+      {
+        name: '_stakingTokenAddress',
+        internalType: 'address',
+        type: 'address',
+      },
+      { name: '_treasuryAddress', internalType: 'address', type: 'address' },
+      { name: '_penaltyRate', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'previousOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'newOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'OwnershipTransferred',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'penaltyAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Penalized',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'stakeAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'liquidityAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Staked',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'stakeAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'liquidityAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Withdrawn',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'betStakingToken',
+    outputs: [
+      { name: '', internalType: 'contract BetStakingToken', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
     type: 'function',
     inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
     name: 'getStakeAmount',
@@ -347,8 +588,81 @@ export const socialOracleAbi = [
   },
   {
     type: 'function',
+    inputs: [],
+    name: 'liquidityToken',
+    outputs: [{ name: '', internalType: 'contract IERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
     name: 'penalize',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'penaltyRate',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'stakeAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'liquidityAmount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'stake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'stakingToken',
+    outputs: [{ name: '', internalType: 'contract IERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'totalStaked',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'treasuryAddress',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'stakeAmount', internalType: 'uint256', type: 'uint256' }],
+    name: 'withdraw',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -983,12 +1297,45 @@ export const useReadSocialOracle = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"getStakeAmount"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"answers"`
  */
-export const useReadSocialOracleGetStakeAmount =
+export const useReadSocialOracleAnswers = /*#__PURE__*/ createUseReadContract({
+  abi: socialOracleAbi,
+  functionName: 'answers',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"getQuestionOutcome"`
+ */
+export const useReadSocialOracleGetQuestionOutcome =
   /*#__PURE__*/ createUseReadContract({
     abi: socialOracleAbi,
-    functionName: 'getStakeAmount',
+    functionName: 'getQuestionOutcome',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"hasAnswered"`
+ */
+export const useReadSocialOracleHasAnswered =
+  /*#__PURE__*/ createUseReadContract({
+    abi: socialOracleAbi,
+    functionName: 'hasAnswered',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"questions"`
+ */
+export const useReadSocialOracleQuestions = /*#__PURE__*/ createUseReadContract(
+  { abi: socialOracleAbi, functionName: 'questions' },
+)
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"stakeContract"`
+ */
+export const useReadSocialOracleStakeContract =
+  /*#__PURE__*/ createUseReadContract({
+    abi: socialOracleAbi,
+    functionName: 'stakeContract',
   })
 
 /**
@@ -999,12 +1346,30 @@ export const useWriteSocialOracle = /*#__PURE__*/ createUseWriteContract({
 })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"penalize"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"addQuestion"`
  */
-export const useWriteSocialOraclePenalize =
+export const useWriteSocialOracleAddQuestion =
   /*#__PURE__*/ createUseWriteContract({
     abi: socialOracleAbi,
-    functionName: 'penalize',
+    functionName: 'addQuestion',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"determineCorrectAnswer"`
+ */
+export const useWriteSocialOracleDetermineCorrectAnswer =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: socialOracleAbi,
+    functionName: 'determineCorrectAnswer',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"submitAnswer"`
+ */
+export const useWriteSocialOracleSubmitAnswer =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: socialOracleAbi,
+    functionName: 'submitAnswer',
   })
 
 /**
@@ -1015,12 +1380,286 @@ export const useSimulateSocialOracle = /*#__PURE__*/ createUseSimulateContract({
 })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"penalize"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"addQuestion"`
  */
-export const useSimulateSocialOraclePenalize =
+export const useSimulateSocialOracleAddQuestion =
   /*#__PURE__*/ createUseSimulateContract({
     abi: socialOracleAbi,
+    functionName: 'addQuestion',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"determineCorrectAnswer"`
+ */
+export const useSimulateSocialOracleDetermineCorrectAnswer =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: socialOracleAbi,
+    functionName: 'determineCorrectAnswer',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link socialOracleAbi}__ and `functionName` set to `"submitAnswer"`
+ */
+export const useSimulateSocialOracleSubmitAnswer =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: socialOracleAbi,
+    functionName: 'submitAnswer',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__
+ */
+export const useWatchSocialOracleEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({ abi: socialOracleAbi })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__ and `eventName` set to `"AnswerSubmitted"`
+ */
+export const useWatchSocialOracleAnswerSubmittedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: socialOracleAbi,
+    eventName: 'AnswerSubmitted',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__ and `eventName` set to `"QuestionAnswered"`
+ */
+export const useWatchSocialOracleQuestionAnsweredEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: socialOracleAbi,
+    eventName: 'QuestionAnswered',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link socialOracleAbi}__ and `eventName` set to `"QuestionCreated"`
+ */
+export const useWatchSocialOracleQuestionCreatedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: socialOracleAbi,
+    eventName: 'QuestionCreated',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__
+ */
+export const useReadStakeContract = /*#__PURE__*/ createUseReadContract({
+  abi: stakeContractAbi,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"betStakingToken"`
+ */
+export const useReadStakeContractBetStakingToken =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakeContractAbi,
+    functionName: 'betStakingToken',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"getStakeAmount"`
+ */
+export const useReadStakeContractGetStakeAmount =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakeContractAbi,
+    functionName: 'getStakeAmount',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"liquidityToken"`
+ */
+export const useReadStakeContractLiquidityToken =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakeContractAbi,
+    functionName: 'liquidityToken',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"owner"`
+ */
+export const useReadStakeContractOwner = /*#__PURE__*/ createUseReadContract({
+  abi: stakeContractAbi,
+  functionName: 'owner',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"penaltyRate"`
+ */
+export const useReadStakeContractPenaltyRate =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakeContractAbi,
+    functionName: 'penaltyRate',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"stakingToken"`
+ */
+export const useReadStakeContractStakingToken =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakeContractAbi,
+    functionName: 'stakingToken',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"totalStaked"`
+ */
+export const useReadStakeContractTotalStaked =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakeContractAbi,
+    functionName: 'totalStaked',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"treasuryAddress"`
+ */
+export const useReadStakeContractTreasuryAddress =
+  /*#__PURE__*/ createUseReadContract({
+    abi: stakeContractAbi,
+    functionName: 'treasuryAddress',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakeContractAbi}__
+ */
+export const useWriteStakeContract = /*#__PURE__*/ createUseWriteContract({
+  abi: stakeContractAbi,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"penalize"`
+ */
+export const useWriteStakeContractPenalize =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: stakeContractAbi,
     functionName: 'penalize',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useWriteStakeContractRenounceOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: stakeContractAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"stake"`
+ */
+export const useWriteStakeContractStake = /*#__PURE__*/ createUseWriteContract({
+  abi: stakeContractAbi,
+  functionName: 'stake',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useWriteStakeContractTransferOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: stakeContractAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const useWriteStakeContractWithdraw =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: stakeContractAbi,
+    functionName: 'withdraw',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakeContractAbi}__
+ */
+export const useSimulateStakeContract = /*#__PURE__*/ createUseSimulateContract(
+  { abi: stakeContractAbi },
+)
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"penalize"`
+ */
+export const useSimulateStakeContractPenalize =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakeContractAbi,
+    functionName: 'penalize',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useSimulateStakeContractRenounceOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakeContractAbi,
+    functionName: 'renounceOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"stake"`
+ */
+export const useSimulateStakeContractStake =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakeContractAbi,
+    functionName: 'stake',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useSimulateStakeContractTransferOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakeContractAbi,
+    functionName: 'transferOwnership',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link stakeContractAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const useSimulateStakeContractWithdraw =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: stakeContractAbi,
+    functionName: 'withdraw',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakeContractAbi}__
+ */
+export const useWatchStakeContractEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({ abi: stakeContractAbi })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakeContractAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ */
+export const useWatchStakeContractOwnershipTransferredEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakeContractAbi,
+    eventName: 'OwnershipTransferred',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakeContractAbi}__ and `eventName` set to `"Penalized"`
+ */
+export const useWatchStakeContractPenalizedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakeContractAbi,
+    eventName: 'Penalized',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakeContractAbi}__ and `eventName` set to `"Staked"`
+ */
+export const useWatchStakeContractStakedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakeContractAbi,
+    eventName: 'Staked',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link stakeContractAbi}__ and `eventName` set to `"Withdrawn"`
+ */
+export const useWatchStakeContractWithdrawnEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: stakeContractAbi,
+    eventName: 'Withdrawn',
   })
 
 /**
