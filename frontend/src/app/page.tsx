@@ -21,15 +21,15 @@ import {
   TestnetTokens,
   ContractInteractions,
 } from "~/app/_components/MatchNFTs";
-import { useAccount } from "wagmi";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
       <w3m-button />
-      <ContractInteractions />
+      <MatchNFTs />
+      <CreateMatchComponent />
       <div className="grid gap-6 sm:grid-cols-1 lg:max-w-[70%] lg:grid-cols-1 xl:grid-cols-1">
         <Card>
           <CardHeader>
