@@ -6,7 +6,6 @@ import AutoFormNumber from "./fields/number";
 import AutoFormRadioGroup from "./fields/radio-group";
 import AutoFormSwitch from "./fields/switch";
 import AutoFormTextarea from "./fields/textarea";
-import AutoFormTokenEnum from "./fields/tokens-enum";
 
 export const INPUT_COMPONENTS = {
   checkbox: AutoFormCheckbox,
@@ -18,7 +17,6 @@ export const INPUT_COMPONENTS = {
   number: AutoFormNumber,
   fallback: AutoFormInput,
   password: AutoFormPasswordInput,
-  tokenSelect: AutoFormTokenEnum,
 };
 
 /**

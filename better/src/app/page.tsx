@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { CreatePost } from "~/app/_components/create-post";
 import { api } from "~/trpc/server";
+import { HelloForm } from "~/app/_components/FormComponent";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -60,6 +61,7 @@ async function CrudShowcase() {
       )}
 
       <CreatePost />
+      <HelloForm />
     </div>
   );
 }
