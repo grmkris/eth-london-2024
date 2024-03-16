@@ -4,6 +4,7 @@ import "@nomicfoundation/hardhat-ignition-viem";
 import "@nomicfoundation/hardhat-viem";
 import { formatEther } from "viem";
 import { ENV } from "./env";
+import { baseSepolia } from "viem/chains";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -26,6 +27,13 @@ const config: HardhatUserConfig = {
         mnemonic: ENV.MNEMONIC,
       },
     },
+    baseSepolia: {
+      url: "https://sepolia.base.org",
+      accounts: {
+        mnemonic: ENV.MNEMONIC,
+      },
+      chainId: 84532,
+    },
     mumbai: {
       url: ENV.MUMBAI_URL,
       accounts: {
@@ -47,7 +55,7 @@ task(
       const balance = await publicClient.getBalance({
         address: account.account.address,
       });
-      console.log(`${account.account.address}: ${formatEther(balance)} ETH`);
+      console.log(`${account.account.address} - ${formatEther(balance)} ETH`);
     }
   },
 );

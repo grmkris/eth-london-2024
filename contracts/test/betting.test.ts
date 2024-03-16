@@ -70,7 +70,7 @@ describe("DecentralizedBetting", function () {
         BigInt(timestamp),
       ]);
 
-      console.log("Event tx", event);
+      console.log("Create event tx: ", event);
 
       // Verify the event was created correctly
       // Note: Implement the getEvent function in your contract to fetch event details
@@ -93,7 +93,7 @@ describe("DecentralizedBetting", function () {
         { account: fan1.account, value: BigInt(50000) },
       );
 
-      console.log("Bet tx", betTx);
+      console.log("Bet tx 1", betTx);
       const betTx2 = await decentralizedBetting.write.placeBet(
         [BigInt(1), true],
         { account: fan2.account, value: BigInt(50000) },
