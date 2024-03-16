@@ -16,7 +16,7 @@ contract MockStakeContract is IStakeContract {
     constructor() {}
 
     // getStakeAmount always returns 100 to satisfy the requirement from SocialOracle
-    function getStakeAmount(address user) external pure override returns (uint256) {
+    function getStakeAmount(address) external pure override returns (uint256) {
         return 100;
     }
 
