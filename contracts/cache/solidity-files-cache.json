@@ -653,6 +653,49 @@
         "IStakeContract",
         "SocialOracle"
       ]
+    },
+    "/Users/kristjangrm/Code/eth-global-london-2024/contracts/contracts/MockStakeContract.sol": {
+      "lastModificationDate": 1710591720754,
+      "contentHash": "bd1546ccef7397a9533db0a4c4007c26",
+      "sourceName": "contracts/MockStakeContract.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200,
+            "details": {
+              "yulDetails": {
+                "optimizerSteps": "u"
+              }
+            }
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IStakeContract",
+        "MockStakeContract"
+      ]
     }
   }
 }

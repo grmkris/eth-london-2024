@@ -7,6 +7,10 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "accounts": "hardhat accounts",
+    "deploy:lock": "npx hardhat ignition deploy ignition/modules/LockModule.ts",
+    "deploy:matchnft": "npx hardhat ignition deploy ignition/modules/MatchNFTModule.ts",
+    "deploy:social-oracle": "npx hardhat ignition deploy ignition/modules/SocialOracleModule.ts",
+    "deploy:decentralized-betting": "npx hardhat ignition deploy ignition/modules/DecentralizedBettingModule.ts",
     "accounts:mumbai": "hardhat accounts --network mumbai",
     "test:mumbai": "hardhat test --network mumbai"
   },
