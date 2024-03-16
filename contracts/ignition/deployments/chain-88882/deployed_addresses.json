@@ -1,0 +1,10 @@
+{
+  "DecentralizedBettingModule#BetStakingToken": "0x2B2D005ABc4dc4aaeAa28F41a02f89DaB42F9169",
+  "DecentralizedBettingModule#MatchNFT": "0x3bDAE92ec59Fb9f3f7A0175a762936B2bBc86BBe",
+  "DecentralizedBettingModule#TEST_LiqudityToken": "0xFe14B387DDA1a8BC9Dee174D49EFac6AF358c1b4",
+  "DecentralizedBettingModule#TEST_StakingToken": "0x1b3BFeac5C03be29aeB96Be5513640BC82969a79",
+  "DecentralizedBettingModule#TreasuryContract": "0x1ebEA0132b75A4044eF46f719733eba1c6fdEead",
+  "DecentralizedBettingModule#StakeContract": "0x1F29897D562C94E45fE27eFdd378A201daCaD4D8",
+  "DecentralizedBettingModule#SocialOracle": "0xd3472c15936a693e08C13C633F8eF55515Ebf90C",
+  "DecentralizedBettingModule#DecentralizedBetting": "0x78B69f6ca38c049dDa019Afb6a9787E3d74caf16"
+}

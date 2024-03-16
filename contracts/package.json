@@ -11,6 +11,8 @@
     "deploy:social-oracle": "npx hardhat ignition deploy ignition/modules/SocialOracleModule.ts",
     "deploy:decentralized-betting": "npx hardhat ignition deploy ignition/modules/DecentralizedBettingModule.ts",
     "deploy:decentralized-betting:base": "npx hardhat ignition deploy ignition/modules/DecentralizedBettingModule.ts --network baseSepolia",
+    "deploy:decentralized-betting:chiliz-testnet": "npx hardhat ignition deploy ignition/modules/DecentralizedBettingModule.ts --network chilizTestnet",
+    "deploy:decentralized-betting:arb-sepolia": "npx hardhat ignition deploy ignition/modules/DecentralizedBettingModule.ts --network arbSepolia",
     "accounts:mumbai": "hardhat accounts --network mumbai",
     "test:mumbai": "hardhat test --network mumbai",
     "test": "hardhat test test/betting.test.ts",

@@ -9,7 +9,6 @@ import {
   useWriteDecentralizedBettingCreateEvent,
   useWriteDecentralizedBettingPlaceBet,
   useWriteDecentralizedBettingResolveEvent,
-  useWriteSocialOracle,
   useWriteSocialOracleDetermineCorrectAnswer,
   useWriteSocialOracleSubmitAnswer,
   useWriteStakeContractStake,
@@ -17,7 +16,7 @@ import {
   useWriteTestTokensMint,
 } from "~/generated";
 import { Button } from "~/components/ui/button";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { Address, formatEther, parseEther } from "viem";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -46,7 +45,40 @@ export const ADDRESSES = {
     SocialOracle: "0xa322a2f58bD32bBf054f171877Ed23d0395d0ed2",
     DecentralizedBetting: "0xab1815ba62132B1E12eaa244C6b629070e328100",
   },
+  "arb-sepolia": {
+    TEST_StakingToken: "0x6c85Eb19F92e5D43e676a0b945B044397E9d91E9",
+    BetStakingToken: "0x5CeC78AcbBe7f0C40002211D92EF13aa5a2423a5",
+    MatchNFT: "0x9F8c092119E17020D8FCed06622370bDd83E73A0",
+    TEST_LiqudityToken: "0xf9124162351f9923f4ef509F703aCA21d159Dc26",
+    TreasuryContract: "0x0822b8f1a3A9DA5c58d33631f6D8f426e2856d50",
+    StakeContract: "0xa83C10535e45DA8d746F651b7a561E90FCD7ad20",
+    SocialOracle: "0x0d1B990935DF3E2Bc68762CF5Ea525FCfA296877",
+    DecentralizedBetting: "0x154B9B163dEf5fA89AF0E589EB881Eff1f032Fc0",
+  },
+  spicy: {
+    BetStakingToken: "0x2B2D005ABc4dc4aaeAa28F41a02f89DaB42F9169",
+    MatchNFT: "0x3bDAE92ec59Fb9f3f7A0175a762936B2bBc86BBe",
+    TEST_LiqudityToken: "0xFe14B387DDA1a8BC9Dee174D49EFac6AF358c1b4",
+    TEST_StakingToken: "0x1b3BFeac5C03be29aeB96Be5513640BC82969a79",
+    TreasuryContract: "0x1ebEA0132b75A4044eF46f719733eba1c6fdEead",
+    StakeContract: "0x1F29897D562C94E45fE27eFdd378A201daCaD4D8",
+    SocialOracle: "0xd3472c15936a693e08C13C633F8eF55515Ebf90C",
+    DecentralizedBetting: "0x78B69f6ca38c049dDa019Afb6a9787E3d74caf16",
+  },
 } as const;
+
+export const GET_CONTRACT_ADDRESSES = (chain: number) => {
+  switch (chain) {
+    case 84532:
+      return ADDRESSES["base-sepolia"];
+    case 421614:
+      return ADDRESSES["arb-sepolia"];
+    case 88882:
+      return ADDRESSES["spicy"];
+    default:
+      return ADDRESSES["base-sepolia"];
+  }
+};
 
 const MATCH_IDS = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -73,8 +105,9 @@ type Match = {
 
 export const MatchNFTs = () => {
   const account = useAccount();
+  const chainId = useChainId();
 
-  if (!account.address) return null;
+  if (!account.address || !chainId) return null;
   return (
     <div>
       <h1>Matches</h1>
@@ -85,9 +118,10 @@ export const MatchNFTs = () => {
   );
 };
 
-export const useMatch = (id: number) => {
+export const useMatch = (props: { id: number; network: number }) => {
+  const { id, network } = props;
   const { data } = useReadDecentralizedBettingEvents({
-    address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+    address: GET_CONTRACT_ADDRESSES(network).DecentralizedBetting,
     args: [BigInt(id)],
   });
 
@@ -108,22 +142,33 @@ export const useMatch = (id: number) => {
   return mappedMatch;
 };
 
-export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
+export const MatchNFT = ({
+  id,
+  address,
+  chainId,
+}: {
+  id: number;
+  address: Address;
+  chainId: number;
+}) => {
   const queryClient = useQueryClient();
-  const mappedMatch = useMatch(id);
+  const mappedMatch = useMatch({
+    id,
+    network: chainId,
+  });
   const bet = useWriteDecentralizedBettingPlaceBet();
   const staking = useReadTestTokensBalanceOf({
-    address: ADDRESSES["base-sepolia"].BetStakingToken,
+    address: GET_CONTRACT_ADDRESSES(chainId).BetStakingToken,
     args: [address],
   });
   const liquidityTokenALlowance = useReadTestTokensAllowance({
-    address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
-    args: [address, ADDRESSES["base-sepolia"].DecentralizedBetting],
+    address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+    args: [address, GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting],
   });
 
   const handleBet = async (decision: boolean) => {
     bet.writeContractAsync({
-      address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+      address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
       args: [BigInt(id), decision, BigInt(1000000000000000000)],
     });
     await queryClient.invalidateQueries();
@@ -133,29 +178,29 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
   const resolveEvent = useWriteDecentralizedBettingResolveEvent();
   const handleOracle = async (decision: boolean) => {
     oracle.writeContractAsync({
-      address: ADDRESSES["base-sepolia"].SocialOracle,
+      address: GET_CONTRACT_ADDRESSES(chainId).SocialOracle,
       args: [BigInt(id), decision],
     });
     await queryClient.invalidateQueries();
   };
 
   const allowanceLiquidty = useReadTestTokensAllowance({
-    address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
-    args: [address, ADDRESSES["base-sepolia"].DecentralizedBetting],
+    address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+    args: [address, GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting],
   });
   const allowanceStaking = useReadTestTokensAllowance({
-    address: ADDRESSES["base-sepolia"].TEST_StakingToken,
-    args: [address, ADDRESSES["base-sepolia"].DecentralizedBetting],
+    address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
+    args: [address, GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting],
   });
   const increaseAllowanceLiquidty = useWriteTestTokensIncreaseAllowance();
 
   const betStatus = useReadDecentralizedBettingBets({
-    address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+    address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
     args: [BigInt(id), address],
   });
   const claim = useWriteDecentralizedBettingClaimWinnings();
   const tokenUri = useReadMatchNftTokenUri({
-    address: ADDRESSES["base-sepolia"].MatchNFT,
+    address: GET_CONTRACT_ADDRESSES(chainId).MatchNFT,
     args: [BigInt(id)],
   });
 
@@ -187,7 +232,7 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
         <CardDescription>
           <Link
             href={
-              `https://testnets.opensea.io/assets/base-sepolia/${ADDRESSES["base-sepolia"].MatchNFT}/${id}` ??
+              `https://testnets.opensea.io/assets/base-sepolia/${GET_CONTRACT_ADDRESSES(chainId).MatchNFT}/${id}` ??
               ""
             }
           >
@@ -224,7 +269,8 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
                 <Button
                   onClick={async () => {
                     claim.writeContractAsync({
-                      address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+                      address:
+                        GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
                       args: [BigInt(id)],
                     });
                     await queryClient.invalidateQueries();
@@ -251,9 +297,11 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
                           onClick={async () => {
                             increaseAllowanceLiquidty.writeContractAsync({
                               address:
-                                ADDRESSES["base-sepolia"].TEST_LiqudityToken,
+                                GET_CONTRACT_ADDRESSES(chainId)
+                                  .TEST_LiqudityToken,
                               args: [
-                                ADDRESSES["base-sepolia"].DecentralizedBetting,
+                                GET_CONTRACT_ADDRESSES(chainId)
+                                  .DecentralizedBetting,
                                 BigInt(1000000000000000000),
                               ],
                             });
@@ -284,7 +332,7 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
                   onClick={async () => {
                     try {
                       determineCorrectAnswer.writeContractAsync({
-                        address: ADDRESSES["base-sepolia"].SocialOracle,
+                        address: GET_CONTRACT_ADDRESSES(chainId).SocialOracle,
                         args: [BigInt(id)],
                       });
                       console.log("determineCorrectAnswer");
@@ -292,7 +340,8 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
                       console.error(e);
                     }
                     resolveEvent.writeContractAsync({
-                      address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+                      address:
+                        GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
                       args: [BigInt(id)],
                     });
                     await queryClient.invalidateQueries();
@@ -314,12 +363,13 @@ export const CreateMatchComponent = () => {
   const queryClient = useQueryClient();
   const writeDecentralizedBettingCreateEvent =
     useWriteDecentralizedBettingCreateEvent();
-
+  const chainId = useChainId();
+  if (!chainId) return null;
   return (
     <Button
       onClick={async () => {
         writeDecentralizedBettingCreateEvent.writeContractAsync({
-          address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+          address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
           args: [BigInt(timestamp)],
         });
         await queryClient.invalidateQueries();
@@ -332,27 +382,29 @@ export const CreateMatchComponent = () => {
 
 export const ContractInteractions = () => {
   const account = useAccount();
+  const chainId = useChainId();
 
-  if (!account.address) return null;
+  if (!account.address || !chainId) return null;
   return (
     <div className="text-white">
-      <TestnetTokens address={account.address} />
-      <StakedTokens address={account.address} />
+      <TestnetTokens address={account.address} chainId={chainId} />
+      <StakedTokens address={account.address} chainId={chainId} />
       <CreateMatchComponent />
       <MatchNFTs />
     </div>
   );
 };
 
-export const TestnetTokens = (props: { address: Address }) => {
+export const TestnetTokens = (props: { address: Address; chainId: number }) => {
+  const { chainId } = props;
   const mintStakingToken = useWriteTestTokensMint();
   const mintLiquidtyToken = useWriteTestTokensMint();
   const balanceStaking = useReadTestTokensBalanceOf({
-    address: ADDRESSES["base-sepolia"].TEST_StakingToken,
+    address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
     args: [props.address],
   });
   const balanceLiqudity = useReadTestTokensBalanceOf({
-    address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
+    address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
     args: [props.address],
   });
   const queryClient = useQueryClient();
@@ -370,11 +422,11 @@ export const TestnetTokens = (props: { address: Address }) => {
       <Button
         onClick={async () => {
           mintLiquidtyToken.writeContractAsync({
-            address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
+            address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
             args: [props.address, BigInt("500000000000000000000")],
           });
           mintStakingToken.writeContractAsync({
-            address: ADDRESSES["base-sepolia"].TEST_StakingToken,
+            address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
             args: [props.address, BigInt("500000000000000000000")],
           });
           await queryClient.invalidateQueries();
@@ -386,20 +438,21 @@ export const TestnetTokens = (props: { address: Address }) => {
   );
 };
 
-export const StakedTokens = (props: { address: Address }) => {
+export const StakedTokens = (props: { address: Address; chainId: number }) => {
+  const { chainId } = props;
   const queryClient = useQueryClient();
   const stake = useWriteStakeContractStake();
   const balance = useReadTestTokensBalanceOf({
-    address: ADDRESSES["base-sepolia"].BetStakingToken,
+    address: GET_CONTRACT_ADDRESSES(chainId).BetStakingToken,
     args: [props.address],
   });
   const allowanceLiquidty = useReadTestTokensAllowance({
-    address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
-    args: [props.address, ADDRESSES["base-sepolia"].StakeContract],
+    address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+    args: [props.address, GET_CONTRACT_ADDRESSES(chainId).StakeContract],
   });
   const allowanceStaking = useReadTestTokensAllowance({
-    address: ADDRESSES["base-sepolia"].TEST_StakingToken,
-    args: [props.address, ADDRESSES["base-sepolia"].StakeContract],
+    address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
+    args: [props.address, GET_CONTRACT_ADDRESSES(chainId).StakeContract],
   });
   const increaseAllowanceLiquidty = useWriteTestTokensIncreaseAllowance();
   const increaseAllowanceStaking = useWriteTestTokensIncreaseAllowance();
@@ -413,7 +466,7 @@ export const StakedTokens = (props: { address: Address }) => {
         }
         onClick={async () => {
           stake.writeContractAsync({
-            address: ADDRESSES["base-sepolia"].StakeContract,
+            address: GET_CONTRACT_ADDRESSES(chainId).StakeContract,
             args: [BigInt(1000000000000000000), BigInt(1000000000000000000)],
           });
           await queryClient.invalidateQueries();
@@ -425,9 +478,9 @@ export const StakedTokens = (props: { address: Address }) => {
         <Button
           onClick={async () => {
             increaseAllowanceLiquidty.writeContractAsync({
-              address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
+              address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
               args: [
-                ADDRESSES["base-sepolia"].StakeContract,
+                GET_CONTRACT_ADDRESSES(chainId).StakeContract,
                 BigInt(1000000000000000000),
               ],
             });
@@ -442,9 +495,9 @@ export const StakedTokens = (props: { address: Address }) => {
         <Button
           onClick={async () => {
             increaseAllowanceStaking.writeContractAsync({
-              address: ADDRESSES["base-sepolia"].TEST_StakingToken,
+              address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
               args: [
-                ADDRESSES["base-sepolia"].StakeContract,
+                GET_CONTRACT_ADDRESSES(chainId).StakeContract,
                 BigInt(1000000000000000000),
               ],
             });

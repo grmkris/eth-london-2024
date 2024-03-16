@@ -41,6 +41,13 @@ const config: HardhatUserConfig = {
       },
       chainId: 88882,
     },
+    arbSepolia: {
+      url: "https://arbitrum-sepolia.blockpi.network/v1/rpc/public",
+      accounts: {
+        mnemonic: ENV.MNEMONIC,
+      },
+      chainId: 421614,
+    },
     mumbai: {
       url: ENV.MUMBAI_URL,
       accounts: {
