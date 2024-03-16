@@ -33,6 +33,7 @@
     "@trpc/next": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
+    "@vercel/og": "^0.6.2",
     "@web3modal/wagmi": "^4.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
