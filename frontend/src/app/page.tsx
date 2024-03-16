@@ -20,49 +20,50 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-1 lg:max-w-[70%] lg:grid-cols-1 xl:grid-cols-1">
         <Card>
           <CardHeader>
             <div className="flex items-center space-x-4">
               <SquareIcon className="h-6 w-6" />
-              <h3 className="text-lg font-medium leading-none">Stake Assets</h3>
+              <h3 className="text-lg font-medium leading-none">
+                Become a Judge - Decide How Much to Support
+              </h3>
             </div>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Select assets to stake and receive LP tokens.
+              Choose how many tokens you want to use to back your match. More
+              tokens mean a stronger influence on maintaining fairness. But dont
+              worry, its all within a safe playfield designed by us.
             </p>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
               <Label className="text-sm" htmlFor="stake-assets">
-                Stake Assets
+                Provide Assets
               </Label>
               <div className="text-sm" id="stake-assets">
-                <p>ETH: 2.5</p>
-                <p>BTC: 0.1</p>
+                <p>USDc: 2.5</p>
               </div>
-            </div>
-            <div className="grid gap-2">
-              <Label className="text-sm" htmlFor="potential-rewards">
-                Potential Rewards
-              </Label>
-              <div className="text-sm" id="potential-rewards">
-                <p>Match 1: 10 Tokens</p>
-                <p>Match 2: 5 Tokens</p>
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label className="text-sm" htmlFor="lp-tokens">
-                LP Tokens
-              </Label>
               <Input
-                className="w-[120px]"
+                className="w-[50%]"
                 id="lp-tokens"
                 placeholder="Enter amount"
                 type="number"
               />
+              <Slider
+                className="w-[50%]"
+                defaultValue={[33]}
+                max={100}
+                step={1}
+              />
             </div>
-            <Slider defaultValue={[33]} max={100} step={1} />
-            <Slider defaultValue={[33]} max={100} step={1} />
+            <div className="grid gap-2">
+              <Label className="text-sm" htmlFor="stake-amount">
+                LP received
+              </Label>
+              <div className="text-sm" id="lp-tokens">
+                <p>LP: 0.5</p>
+              </div>
+            </div>
           </CardContent>
           <CardFooter>
             <Button variant="outline">Confirm</Button>
@@ -73,17 +74,20 @@ export default async function Home() {
             <div className="flex items-center space-x-4">
               <DollarSignIcon className="h-6 w-6" />
               <h3 className="text-lg font-medium leading-none">
-                Stake LP Tokens
+                Create a match - Lock In Your Support
               </h3>
             </div>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Set match parameters and stake LP tokens.
+              Locking your tokens is like putting them in a vault for
+              safekeeping. They'll be there doing their job as you help us keep
+              the game fair. And you'll get a special token (let's call it a
+              'FairPlay Token') as a thank you, which you can use later!
             </p>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
               <Label className="text-sm" htmlFor="match-duration">
-                Match Duration (hours)
+                Match Title
               </Label>
               <Input
                 id="match-duration"
@@ -94,7 +98,7 @@ export default async function Home() {
             </div>
             <div className="grid gap-2">
               <Label className="text-sm" htmlFor="stake-amount">
-                Stake Amount
+                Match Date
               </Label>
               <Input
                 id="stake-amount"
@@ -102,15 +106,17 @@ export default async function Home() {
                 type="number"
               />
             </div>
-            <div className="grid gap-2">
-              <Label className="text-sm" htmlFor="match-params">
-                Match Parameters
-              </Label>
-              <Textarea
-                className="min-h-[80px]"
-                id="match-params"
-                placeholder="Enter match parameters"
-              />
+            <div className="min-w-full">
+              <div className="flex flex-row min-w-full">
+                <div className="max-w-half min-w-full">
+                  Initial Weight A
+                  <Input className="min-w-[40%]" id="match-params" placeholder="Enter amount" />
+                </div>
+                <div className="max-w-half">
+                  Initial Weight A
+                  <Input className="min-w-[40%]" id="match-params" placeholder="Enter amount" />
+                </div>
+              </div>
             </div>
           </CardContent>
           <CardFooter>
