@@ -1,0 +1,6 @@
+{
+  "DecentralizedBettingModule#MatchNFT": "0x0822b8f1a3A9DA5c58d33631f6D8f426e2856d50",
+  "DecentralizedBettingModule#MockStakeContract": "0xa83C10535e45DA8d746F651b7a561E90FCD7ad20",
+  "DecentralizedBettingModule#SocialOracle": "0x803DEa460C42BaFC52572b62710644cC7c7bBb4F",
+  "DecentralizedBettingModule#DecentralizedBetting": "0x0d1B990935DF3E2Bc68762CF5Ea525FCfA296877"
+}
