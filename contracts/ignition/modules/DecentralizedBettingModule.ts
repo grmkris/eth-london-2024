@@ -4,7 +4,7 @@ const DecentralizedBettingModule = buildModule(
   "DecentralizedBettingModule",
   (moduleBuilder) => {
     const matchNFT = moduleBuilder.contract("MatchNFT", [
-      "https://example.com/api/nft/",
+      "https://eth-london-2024-frontend.vercel.app/api/token/",
     ]);
 
     const stakeContract = moduleBuilder.contract("MockStakeContract", []);

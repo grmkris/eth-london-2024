@@ -12,7 +12,7 @@ export async function GET(
   const metadata = {
     name: `Asset ${slug}`, // A title for your asset
     description: greeting, // A description for your asset, using the greeting
-    image: `https://example.com/path/to/your/asset/${slug}.png`, // URL to an image associated with the asset
+    image: `https://eth-london-2024-frontend.vercel.app/api/og/${slug}`,
     // Additional properties can be added here as needed
   };
 

@@ -14,10 +14,10 @@ import { Button } from "~/components/ui/button";
 
 export const ADDRESSES = {
   "base-sepolia": {
-    MatchNFT: "0x01529c3159974eB4E1F036C754d5FaEfb3b22D48",
-    MockStakeContract: "0x74D3Af184243DE890722F33100DE0e93d3E28744",
-    SocialOracle: "0x7fBEe256fcCea5e895A4F286419aD5c61018A551",
-    DecentralizedBetting: "0x0Ec0938aE1dd07454133B09bc93F23344CBBf4C1",
+    MatchNFT: "0x37B8a87BaAae627D0533154370501B91F6b272b9",
+    MockStakeContract: "0x2CE091997aD20529f9eFFa9F338a6fEbEb8607a7",
+    SocialOracle: "0x172b630BA82e85A32876617C273FbB28A37C06E9",
+    DecentralizedBetting: "0x9A703a33b027Bc843e260617A02aDc73f1777411",
   },
 } as const;
 
