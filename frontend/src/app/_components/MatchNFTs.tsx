@@ -4,8 +4,10 @@ import {
   useReadDecentralizedBettingEvents,
   useReadTestTokensAllowance,
   useReadTestTokensBalanceOf,
+  useWriteDecentralizedBettingClaimWinnings,
   useWriteDecentralizedBettingCreateEvent,
   useWriteDecentralizedBettingPlaceBet,
+  useWriteDecentralizedBettingResolveEvent,
   useWriteSocialOracle,
   useWriteSocialOracleDetermineCorrectAnswer,
   useWriteSocialOracleSubmitAnswer,
@@ -117,21 +119,22 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
     args: [address, ADDRESSES["base-sepolia"].DecentralizedBetting],
   });
 
-  const handleBet = (decision: boolean) => {
+  const handleBet = async (decision: boolean) => {
     bet.writeContractAsync({
       address: ADDRESSES["base-sepolia"].DecentralizedBetting,
       args: [BigInt(id), decision, BigInt(1000000000000000000)],
     });
-    queryClient.invalidateQueries();
+    await queryClient.invalidateQueries();
   };
   const oracle = useWriteSocialOracleSubmitAnswer();
   const determineCorrectAnswer = useWriteSocialOracleDetermineCorrectAnswer();
-  const handleOracle = (decision: boolean) => {
+  const resolveEvent = useWriteDecentralizedBettingResolveEvent();
+  const handleOracle = async (decision: boolean) => {
     oracle.writeContractAsync({
       address: ADDRESSES["base-sepolia"].SocialOracle,
       args: [BigInt(id), decision],
     });
-    queryClient.invalidateQueries();
+    await queryClient.invalidateQueries();
   };
 
   const allowanceLiquidty = useReadTestTokensAllowance({
@@ -148,6 +151,7 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
     address: ADDRESSES["base-sepolia"].DecentralizedBetting,
     args: [BigInt(id), address],
   });
+  const claim = useWriteDecentralizedBettingClaimWinnings();
 
   console.log("betStatus", betStatus);
 
@@ -178,7 +182,20 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
 
       <CardFooter>
         {mappedMatch.resolved ? (
-          <div>Mach resolved</div>
+          <>
+            <div>Mach resolved</div>
+            <Button
+              onClick={async () => {
+                claim.writeContractAsync({
+                  address: ADDRESSES["base-sepolia"].DecentralizedBetting,
+                  args: [BigInt(id)],
+                });
+                await queryClient.invalidateQueries();
+              }}
+            >
+              Claim winnings
+            </Button>
+          </>
         ) : (
           <>
             {!staking?.data && (
@@ -226,12 +243,22 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
                   Resolve false
                 </Button>
                 <Button
-                  onClick={() =>
-                    determineCorrectAnswer.writeContractAsync({
-                      address: ADDRESSES["base-sepolia"].SocialOracle,
+                  onClick={async () => {
+                    try {
+                      determineCorrectAnswer.writeContractAsync({
+                        address: ADDRESSES["base-sepolia"].SocialOracle,
+                        args: [BigInt(id)],
+                      });
+                      console.log("determineCorrectAnswer");
+                    } catch (e) {
+                      console.error(e);
+                    }
+                    resolveEvent.writeContractAsync({
+                      address: ADDRESSES["base-sepolia"].DecentralizedBetting,
                       args: [BigInt(id)],
-                    })
-                  }
+                    });
+                    await queryClient.invalidateQueries();
+                  }}
                 >
                   Finalize
                 </Button>
@@ -246,16 +273,18 @@ export const MatchNFT = ({ id, address }: { id: number; address: Address }) => {
 
 export const CreateMatchComponent = () => {
   const timestamp = Date.now();
+  const queryClient = useQueryClient();
   const writeDecentralizedBettingCreateEvent =
     useWriteDecentralizedBettingCreateEvent();
 
   return (
     <Button
-      onClick={() => {
+      onClick={async () => {
         writeDecentralizedBettingCreateEvent.writeContractAsync({
           address: ADDRESSES["base-sepolia"].DecentralizedBetting,
           args: [BigInt(timestamp)],
         });
+        await queryClient.invalidateQueries();
       }}
     >
       Create match
@@ -288,17 +317,19 @@ export const TestnetTokens = (props: { address: Address }) => {
     address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
     args: [props.address],
   });
+  const queryClient = useQueryClient();
 
   return (
     <div>
       Balance staking token:{" "}
       {formatEther(balanceStaking?.data ?? BigInt(0)).toString()}
       <Button
-        onClick={() => {
+        onClick={async () => {
           mintStakingToken.writeContractAsync({
             address: ADDRESSES["base-sepolia"].TEST_StakingToken,
             args: [props.address, BigInt(1000000000000000000)],
           });
+          await queryClient.invalidateQueries();
         }}
       >
         Mint staking token
@@ -306,11 +337,12 @@ export const TestnetTokens = (props: { address: Address }) => {
       Balance liquidty token:{" "}
       {formatEther(balanceLiqudity?.data ?? BigInt(0)).toString()}
       <Button
-        onClick={() => {
+        onClick={async () => {
           mintLiquidtyToken.writeContractAsync({
             address: ADDRESSES["base-sepolia"].TEST_LiqudityToken,
             args: [props.address, BigInt(1000000000000000000)],
           });
+          await queryClient.invalidateQueries();
         }}
       >
         Mint liq token
