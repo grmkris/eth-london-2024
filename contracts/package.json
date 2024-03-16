@@ -14,7 +14,8 @@
     "accounts:mumbai": "hardhat accounts --network mumbai",
     "test:mumbai": "hardhat test --network mumbai",
     "test": "hardhat test test/betting.test.ts",
-    "test:base-sepolia": "hardhat test test/betting.test.ts --network baseSepolia"
+    "test:base-sepolia": "hardhat test test/betting.test.ts --network baseSepolia",
+    "test:chiliz-testnet": "hardhat test test/betting.test.ts --network chilizTestnet"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.14.0",

@@ -54,6 +54,8 @@ async function deployDecentralizedBettingFixture() {
   };
 }
 
+const oneUnit = BigInt(10 ** 18);
+const halfUnit = BigInt(10 ** 17);
 type Fixture = Awaited<ReturnType<typeof deployDecentralizedBettingFixture>>;
 async function initializeContracts() {
   let decentralizedBetting: Fixture["decentralizedBetting"],
@@ -165,6 +167,7 @@ describe("DecentralizedBetting", function () {
 
   describe("Functionality", function () {
     it("Should allow creating an event", async function () {
+      const TOKEN_ID = BigInt(1);
       const publicClient = await hre.viem.getPublicClient();
       const [admin, fan1, fan2, fan3, staker1, staker2] =
         await hre.viem.getWalletClients();
@@ -196,48 +199,77 @@ describe("DecentralizedBetting", function () {
 
       const mintLiquidity = await tEST_LiqudityToken.write.mint([
         staker1.account.address,
-        BigInt(100000),
+        oneUnit * BigInt(10),
       ]);
+      await waitForTransactionReceipt(pc, {
+        hash: mintLiquidity,
+      });
       console.log("Mint liquidity tx", mintLiquidity);
       const mintStaking = await tEST_StakingToken.write.mint([
         staker1.account.address,
-        BigInt(100000),
+        oneUnit * BigInt(10),
       ]);
+
+      await waitForTransactionReceipt(pc, {
+        hash: mintStaking,
+      });
 
       console.log("Mint staking tx", mintStaking);
 
       const mintLiquidity2 = await tEST_LiqudityToken.write.mint([
         staker2.account.address,
-        BigInt(100000),
+        oneUnit * BigInt(10),
       ]);
 
       console.log("Mint liquidity tx 2", mintLiquidity2);
 
-      const mintStaking2 = await tEST_StakingToken.write.mint([
-        staker2.account.address,
-        BigInt(100000),
-      ]);
+      await waitForTransactionReceipt(pc, {
+        hash: mintLiquidity2,
+      });
+
+      const mintStaking2 = await tEST_StakingToken.write.mint(
+        [staker2.account.address, oneUnit * BigInt(10)],
+        {},
+      );
+
+      await waitForTransactionReceipt(pc, {
+        hash: mintStaking2,
+      });
 
       console.log("Mint staking tx 2", mintStaking2);
 
       // mint some liquidty tokens to fans
       const mintLiquidity3 = await tEST_LiqudityToken.write.mint([
         fan1.account.address,
-        BigInt(100000),
+        oneUnit * BigInt(10),
       ]);
+
+      await waitForTransactionReceipt(pc, {
+        hash: mintLiquidity3,
+      });
 
       console.log("Mint liquidity tx 3", mintLiquidity3);
 
       const mintLiquidity4 = await tEST_LiqudityToken.write.mint([
         fan2.account.address,
-        BigInt(100000),
+        oneUnit * BigInt(10),
       ]);
+      await waitForTransactionReceipt(pc, {
+        hash: mintLiquidity4,
+        confirmations: 1,
+      });
 
       console.log("Mint liquidity tx 4", mintLiquidity4);
+
       const mintLiquidity5 = await tEST_LiqudityToken.write.mint([
         fan3.account.address,
-        BigInt(100000),
+        oneUnit * BigInt(10),
       ]);
+
+      await waitForTransactionReceipt(pc, {
+        hash: mintLiquidity5,
+        confirmations: 1,
+      });
 
       const event = await decentralizedBetting.write.createEvent([
         BigInt(timestamp),
@@ -245,60 +277,84 @@ describe("DecentralizedBetting", function () {
 
       console.log("Create event tx: ", event);
 
+      await waitForTransactionReceipt(pc, {
+        hash: event,
+      });
+
       // Verify the event was created correctly
       // Note: Implement the getEvent function in your contract to fetch event details
-      const eventData = await decentralizedBetting.read.events([BigInt(1)]);
+      const eventData = await decentralizedBetting.read.events([TOKEN_ID]);
 
       console.log("Event data", eventData);
 
       // check that nft was minted for nft
 
-      const nft = await matchNFT.read.ownerOf([BigInt(1)]);
+      const nft = await matchNFT.read.ownerOf([TOKEN_ID]);
       expect(nft.toLowerCase()).to.equal(admin.account.address.toLowerCase());
 
       // check that question was created for social oracle
-      const question = await socialOracle.read.questions([BigInt(1)]);
+      const question = await socialOracle.read.questions([TOKEN_ID]);
 
       console.log("Question", question);
 
       // increase allowance for placng a bet
       const approveTx = await tEST_LiqudityToken.write.approve(
-        [decentralizedBetting.address, BigInt(10000000)],
+        [decentralizedBetting.address, halfUnit],
         { account: fan1.account },
       );
 
-      waitForTransactionReceipt(pc, {
+      await waitForTransactionReceipt(pc, {
         hash: approveTx,
       });
 
       const betTx = await decentralizedBetting.write.placeBet(
-        [BigInt(1), false, BigInt(100000)],
+        [TOKEN_ID, false, halfUnit],
         { account: fan1.account },
       );
+
+      await waitForTransactionReceipt(pc, {
+        hash: betTx,
+      });
 
       console.log("Bet tx 1", betTx);
 
       const approveTx2 = await tEST_LiqudityToken.write.approve(
-        [decentralizedBetting.address, BigInt(100000)],
+        [decentralizedBetting.address, halfUnit],
         { account: fan2.account },
       );
 
+      await waitForTransactionReceipt(pc, {
+        hash: approveTx2,
+      });
+
       const betTx2 = await decentralizedBetting.write.placeBet(
-        [BigInt(1), true, BigInt(50000)],
+        [TOKEN_ID, true, halfUnit],
         { account: fan2.account },
       );
+
+      await waitForTransactionReceipt(pc, {
+        hash: betTx2,
+      });
 
       console.log("Bet tx 2", betTx2);
 
       const approveTx3 = await tEST_LiqudityToken.write.approve(
-        [decentralizedBetting.address, BigInt(100000)],
+        [decentralizedBetting.address, halfUnit * BigInt(3)],
         { account: fan3.account },
       );
 
+      await waitForTransactionReceipt(pc, {
+        hash: approveTx3,
+      });
+
       const betTx3 = await decentralizedBetting.write.placeBet(
-        [BigInt(1), false, BigInt(50000)],
+        [TOKEN_ID, false, halfUnit * BigInt(3)],
         { account: fan3.account },
       );
+
+      await waitForTransactionReceipt(pc, {
+        hash: betTx3,
+      });
 
       console.log("Bet tx 3", betTx3);
 
@@ -307,10 +363,20 @@ describe("DecentralizedBetting", function () {
         [stakeContract.address, BigInt(100000)],
         { account: staker1.account },
       );
+
+      await waitForTransactionReceipt(pc, {
+        hash: approveTx4,
+      });
+
       const approveTx5 = await tEST_LiqudityToken.write.approve(
         [stakeContract.address, BigInt(100000)],
         { account: staker1.account },
       );
+
+      await waitForTransactionReceipt(pc, {
+        hash: approveTx5,
+      });
+
       // stake
       const stakeTx = await stakeContract.write.stake(
         [BigInt(100000), BigInt(100000)],
@@ -318,6 +384,10 @@ describe("DecentralizedBetting", function () {
           account: staker1.account,
         },
       );
+
+      await waitForTransactionReceipt(pc, {
+        hash: stakeTx,
+      });
 
       console.log("staker1", {
         approveTx4,
@@ -332,11 +402,18 @@ describe("DecentralizedBetting", function () {
         { account: staker2.account },
       );
 
+      await waitForTransactionReceipt(pc, {
+        hash: approveTx6,
+      });
+
       const approveTx7 = await tEST_LiqudityToken.write.approve(
         [stakeContract.address, BigInt(100000)],
         { account: staker2.account },
       );
 
+      await waitForTransactionReceipt(pc, {
+        hash: approveTx7,
+      });
       const stakeTx2 = await stakeContract.write.stake(
         [BigInt(100000), BigInt(100000)],
         {
@@ -344,6 +421,9 @@ describe("DecentralizedBetting", function () {
         },
       );
 
+      await waitForTransactionReceipt(pc, {
+        hash: stakeTx2,
+      });
       console.log("staker2", {
         approveTx6,
         approveTx7,
@@ -351,14 +431,18 @@ describe("DecentralizedBetting", function () {
       });
 
       const oracleTx2 = await socialOracle.write.submitAnswer(
-        [BigInt(1), true],
+        [TOKEN_ID, true],
         { account: staker2.account },
       );
+
+      await waitForTransactionReceipt(pc, {
+        hash: oracleTx2,
+      });
 
       console.log("oracletx2", oracleTx2);
 
       const determineAnswerOracle =
-        await socialOracle.write.determineCorrectAnswer([BigInt(1)]);
+        await socialOracle.write.determineCorrectAnswer([TOKEN_ID]);
 
       console.log("determineAnswerOracle", determineAnswerOracle);
 
@@ -367,7 +451,7 @@ describe("DecentralizedBetting", function () {
       });
 
       const resolveTx = await decentralizedBetting.write.resolveEvent([
-        BigInt(1),
+        TOKEN_ID,
       ]);
 
       await waitForTransactionReceipt(pc, {
@@ -378,7 +462,7 @@ describe("DecentralizedBetting", function () {
 
       // should fail, because the fan didn't win
       const claimWinningsTx = await decentralizedBetting.write.claimWinnings(
-        [BigInt(1)],
+        [TOKEN_ID],
         {
           account: fan1.account,
         },
@@ -386,27 +470,40 @@ describe("DecentralizedBetting", function () {
 
       console.log("Claim winnings tx", claimWinningsTx);
 
+      await waitForTransactionReceipt(pc, {
+        hash: claimWinningsTx,
+      });
+
       // should work, because the fan won
       const claimWinningsTx2 = await decentralizedBetting.write.claimWinnings(
-        [BigInt(1)],
+        [TOKEN_ID],
         {
           account: fan2.account,
         },
       );
 
+      await waitForTransactionReceipt(pc, {
+        hash: claimWinningsTx2,
+      });
+
       console.log("Claim winnings tx 2", claimWinningsTx2);
 
       // should fail, because the fan didn't win
       const claimWinningsTx3 = await decentralizedBetting.write.claimWinnings(
-        [BigInt(1)],
+        [TOKEN_ID],
         {
           account: fan3.account,
         },
       );
-    });
+
+      console.log("Claim winnings tx 3", claimWinningsTx3);
+      await waitForTransactionReceipt(pc, {
+        hash: claimWinningsTx3,
+      });
+    }).timeout(1000000);
 
     // Add more functionality tests here, such as placing bets, resolving events, claiming winnings, etc.
-  });
+  }).timeout(1000000);
 
   // You can add more describe blocks for different categories of tests
-});
+}).timeout(1000000);

@@ -34,6 +34,13 @@ const config: HardhatUserConfig = {
       },
       chainId: 84532,
     },
+    chilizTestnet: {
+      url: "https://spicy-rpc.chiliz.com",
+      accounts: {
+        mnemonic: ENV.MNEMONIC,
+      },
+      chainId: 88882,
+    },
     mumbai: {
       url: ENV.MUMBAI_URL,
       accounts: {
