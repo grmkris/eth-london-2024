@@ -16,9 +16,9 @@ import {
   useWriteTestTokensMint,
 } from "~/generated";
 import { Button } from "~/components/ui/button";
-import { useAccount, useChainId } from "wagmi";
+import { useAccount, useChainId, usePublicClient } from "wagmi";
 import { Address, formatEther, parseEther } from "viem";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import {
   Card,
@@ -32,6 +32,8 @@ import Link from "next/link";
 import { TrendingUpIcon } from "lucide-react";
 import { MatchNFT } from "~/app/_components/MatchNFT";
 import { useRouter } from "next/navigation";
+import { waitForTransactionReceipt } from "viem/actions";
+import { toast } from "sonner";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -200,7 +202,34 @@ export const TestnetTokens = (props: { address: Address; chainId: number }) => {
     args: [props.address],
   });
   const queryClient = useQueryClient();
+  const pc = usePublicClient();
+  const mint = useMutation({
+    onError: (e) => {
+      console.error(e);
+      toast.error(JSON.stringify(e));
+    },
+    mutationFn: async () => {
+      const tx = await mintLiquidtyToken.writeContractAsync({
+        address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+        args: [props.address, BigInt("500000000000000000000")],
+      });
 
+      try {
+        await waitForTransactionReceipt(pc, { hash: tx });
+      } catch (e) {
+        console.error(e);
+      }
+
+      const tx2 = await mintStakingToken.writeContractAsync({
+        address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
+        args: [props.address, BigInt("500000000000000000000")],
+      });
+
+      await waitForTransactionReceipt(pc, { hash: tx2 });
+      toast.success(`Test tokens minted, txhash: ${tx2}`);
+      await queryClient.invalidateQueries();
+    },
+  });
   return (
     <Card>
       <CardHeader>
@@ -215,17 +244,10 @@ export const TestnetTokens = (props: { address: Address; chainId: number }) => {
       </CardHeader>
       <CardFooter>
         <Button
-          onClick={async () => {
-            await mintLiquidtyToken.writeContractAsync({
-              address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
-              args: [props.address, BigInt("500000000000000000000")],
-            });
-            await mintStakingToken.writeContractAsync({
-              address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
-              args: [props.address, BigInt("500000000000000000000")],
-            });
-            await queryClient.invalidateQueries();
-          }}
+          onClick={mint.mutate}
+          loadingText="Minting"
+          isLoading={mint.isPending}
+          disabled={mint.isPending}
         >
           Mint testnet tokens
         </Button>

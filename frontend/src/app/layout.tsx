@@ -8,6 +8,7 @@ import { cookieToInitialState } from "wagmi";
 import { wagmiConfig } from "~/lib/wagmiConfig";
 import { headers } from "next/headers";
 import Web3ModalProvider from "~/lib/WagmiContext";
+import { Toaster } from "~/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Web3ModalProvider initialState={initialState}>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </Web3ModalProvider>
+        <Toaster />
       </body>
     </html>
   );

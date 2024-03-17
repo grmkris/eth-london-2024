@@ -7,7 +7,7 @@ import { CardContent } from "~/components/ui/card";
 
 import { Card, CardHeader } from "~/components/ui/card";
 import { TestnetTokens } from "~/app/_components/MatchNFTs";
-import { useAccount, useChainId } from "wagmi";
+import { useAccount, useChainId, usePublicClient } from "wagmi";
 
 export default function Minting() {
   const chainId = useChainId();

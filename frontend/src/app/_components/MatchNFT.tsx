@@ -1,5 +1,5 @@
 import { Address, formatEther } from "viem";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   useReadDecentralizedBettingBets,
   useReadMatchNftTokenUri,
@@ -23,12 +23,14 @@ import {
 } from "~/components/ui/card";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { useChainId } from "wagmi";
+import { useChainId, usePublicClient } from "wagmi";
 import {
   GET_CONTRACT_ADDRESSES,
   GET_OPENSEA_NETWORK_SLUG,
   useMatch,
 } from "~/app/_components/MatchNFTs";
+import { waitForTransactionReceipt } from "viem/actions";
+import { toast } from "sonner";
 
 export const MatchNFT = ({
   id,
@@ -53,21 +55,38 @@ export const MatchNFT = ({
     address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
     args: [address, GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting],
   });
+  const pc = usePublicClient();
 
-  const handleBet = async (decision: boolean) => {
-    await increaseAllowanceLiquidty.writeContractAsync({
-      address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
-      args: [
-        GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
-        BigInt(1000000000000000000),
-      ],
-    });
-    await bet.writeContractAsync({
-      address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
-      args: [BigInt(id), decision, BigInt(1000000000000000000)],
-    });
-    await queryClient.invalidateQueries();
-  };
+  const handleBet = useMutation({
+    onError: (e) => {
+      console.error(e);
+      toast.error(JSON.stringify(e));
+    },
+    mutationFn: async (decision: boolean) => {
+      const tx = await increaseAllowanceLiquidty.writeContractAsync({
+        address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+        args: [
+          GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
+          BigInt(1000000000000000000),
+        ],
+      });
+      await waitForTransactionReceipt(pc, {
+        hash: tx,
+      });
+
+      const tx2 = await bet.writeContractAsync({
+        address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
+        args: [BigInt(id), decision, BigInt(1000000000000000000)],
+      });
+      await waitForTransactionReceipt(pc, {
+        hash: tx2,
+      });
+
+      toast.success(`Bet placed, txhash: ${tx2}`);
+      await queryClient.invalidateQueries();
+    },
+  });
+
   const oracle = useWriteSocialOracleSubmitAnswer();
   const determineCorrectAnswer = useWriteSocialOracleDetermineCorrectAnswer();
   const resolveEvent = useWriteDecentralizedBettingResolveEvent();
@@ -191,26 +210,18 @@ export const MatchNFT = ({
                 {!betStatus?.data?.[0] > 0 ? (
                   <>
                     <Button
-                      isLoading={
-                        bet.isPending || increaseAllowanceLiquidty.isPending
-                      }
-                      disabled={
-                        bet.isPending || increaseAllowanceLiquidty.isPending
-                      }
+                      isLoading={handleBet.isPending}
+                      disabled={handleBet.isPending}
                       loadingText="Bet is pending..."
-                      onClick={() => handleBet(true)}
+                      onClick={() => handleBet.mutate(true)}
                     >
                       First team wins
                     </Button>
                     <Button
-                      isLoading={
-                        bet.isPending || increaseAllowanceLiquidty.isPending
-                      }
-                      disabled={
-                        bet.isPending || increaseAllowanceLiquidty.isPending
-                      }
+                      isLoading={handleBet.isPending}
+                      disabled={handleBet.isPending}
                       loadingText="Bet is pending..."
-                      onClick={() => handleBet(false)}
+                      onClick={() => handleBet.mutate(false)}
                     >
                       Second team wins
                     </Button>
