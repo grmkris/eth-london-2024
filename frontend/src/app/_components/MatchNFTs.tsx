@@ -68,6 +68,7 @@ export const ADDRESSES = {
 } as const;
 
 export const GET_CONTRACT_ADDRESSES = (chain: number) => {
+  console.log("chain", chain);
   switch (chain) {
     case 84532:
       return ADDRESSES["base-sepolia"];
@@ -77,6 +78,19 @@ export const GET_CONTRACT_ADDRESSES = (chain: number) => {
       return ADDRESSES["spicy"];
     default:
       return ADDRESSES["base-sepolia"];
+  }
+};
+
+export const GET_OPENSEA_NETWORK_SLUG = (chain: number) => {
+  switch (chain) {
+    case 84532:
+      return "base-sepolia";
+    case 421614:
+      return "arbitrum-sepolia";
+    case 88882:
+      return null;
+    default:
+      return "testnets";
   }
 };
 
@@ -112,7 +126,12 @@ export const MatchNFTs = () => {
     <div>
       <h1>Matches</h1>
       {MATCH_IDS.map((id) => (
-        <MatchNFT key={id} id={id} address={account.address} />
+        <MatchNFT
+          key={id}
+          id={id}
+          address={account.address}
+          chainId={chainId}
+        />
       ))}
     </div>
   );
@@ -230,14 +249,17 @@ export const MatchNFT = ({
           <h1>Match NFT {id}</h1>
         </CardTitle>
         <CardDescription>
-          <Link
-            href={
-              `https://testnets.opensea.io/assets/base-sepolia/${GET_CONTRACT_ADDRESSES(chainId).MatchNFT}/${id}` ??
-              ""
-            }
-          >
-            View on OpenSea
-          </Link>
+          {GET_OPENSEA_NETWORK_SLUG(chainId) && (
+            <Link
+              href={
+                `https://testnets.opensea.io/assets/${GET_OPENSEA_NETWORK_SLUG(chainId)}/${GET_CONTRACT_ADDRESSES(chainId).MatchNFT}/${id}` ??
+                ""
+              }
+              target="_blank"
+            >
+              View on OpenSea
+            </Link>
+          )}
           <p>
             {tokenMetadata?.data?.name ?? "Loading"} -{" "}
             {tokenMetadata?.data?.description ?? "Loading"}
@@ -474,23 +496,6 @@ export const StakedTokens = (props: { address: Address; chainId: number }) => {
       >
         Stake
       </Button>
-      {allowanceLiquidty?.data?.toString() === "0" && (
-        <Button
-          onClick={async () => {
-            increaseAllowanceLiquidty.writeContractAsync({
-              address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
-              args: [
-                GET_CONTRACT_ADDRESSES(chainId).StakeContract,
-                BigInt(1000000000000000000),
-              ],
-            });
-            await queryClient.invalidateQueries();
-          }}
-        >
-          Increase allowance liquidty (currently{" "}
-          {allowanceLiquidty?.data?.toString()})
-        </Button>
-      )}
       {allowanceStaking?.data?.toString() === "0" && (
         <Button
           onClick={async () => {
@@ -501,10 +506,17 @@ export const StakedTokens = (props: { address: Address; chainId: number }) => {
                 BigInt(1000000000000000000),
               ],
             });
+            increaseAllowanceLiquidty.writeContractAsync({
+              address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+              args: [
+                GET_CONTRACT_ADDRESSES(chainId).StakeContract,
+                BigInt(1000000000000000000),
+              ],
+            });
             await queryClient.invalidateQueries();
           }}
         >
-          Increase allowance staking (currently{" "}
+          Increase allowance for staking (currently{" "}
           {allowanceStaking?.data?.toString()})
         </Button>
       )}
