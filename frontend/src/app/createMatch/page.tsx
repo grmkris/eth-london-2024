@@ -16,7 +16,7 @@ export default function CreateMatch() {
     setTimestamp(new Date(e.target.value).getTime() / 1000);
   };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-primary to-secondary">
       <Card className="min-w-[50%]">
         <CardHeader>
           <h1>Create Match</h1>
@@ -27,7 +27,7 @@ export default function CreateMatch() {
               Match Name
             </Label>
             <Input
-              className="w-[50%]"
+              className="w-[50%] text-secondary"
               id="match-name"
               placeholder="Match Name"
               type="string"
@@ -38,7 +38,7 @@ export default function CreateMatch() {
               Match Date
             </Label>
             <Input
-              className="w-[50%]"
+              className="w-[50%] text-secondary"
               id="match-name"
               placeholder="Match Name"
               type="date"
@@ -48,11 +48,11 @@ export default function CreateMatch() {
           <div className="flex flex-row justify-between">
             <div className="min-w-[40%]">
               <Label className="text-sm">Team A</Label>
-              <Input placeholder="Name Team A" />
+              <Input className="text-secondary" placeholder="Name Team A" />
             </div>
             <div className="min-w-[40%]">
               <Label className="text-sm">Team B</Label>
-              <Input placeholder="Name Team B" />
+              <Input className="text-secondary" placeholder="Name Team B" />
             </div>
           </div>
           <p>Team initial distribution</p>
