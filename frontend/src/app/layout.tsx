@@ -31,7 +31,7 @@ export default function RootLayout({
   );
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
+      <body className={`font-sans ${inter.variable} bg-gradient-to-b from-secondary to-primary`}>
         <Web3ModalProvider initialState={initialState}>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </Web3ModalProvider>
