@@ -408,10 +408,9 @@ export const ContractInteractions = () => {
 
   if (!account.address || !chainId) return null;
   return (
-    <div className="text-white">
+    <div>
       <TestnetTokens address={account.address} chainId={chainId} />
       <StakedTokens address={account.address} chainId={chainId} />
-      <CreateMatchComponent />
       <MatchNFTs />
     </div>
   );
@@ -432,31 +431,35 @@ export const TestnetTokens = (props: { address: Address; chainId: number }) => {
   const queryClient = useQueryClient();
 
   return (
-    <div>
-      <p>
-        Balance staking token:{" "}
-        {formatEther(balanceStaking?.data ?? BigInt(0)).toString()}
-      </p>
-      <p>
-        Balance liquidty token:{" "}
-        {formatEther(balanceLiqudity?.data ?? BigInt(0)).toString()}
-      </p>
-      <Button
-        onClick={async () => {
-          mintLiquidtyToken.writeContractAsync({
-            address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
-            args: [props.address, BigInt("500000000000000000000")],
-          });
-          mintStakingToken.writeContractAsync({
-            address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
-            args: [props.address, BigInt("500000000000000000000")],
-          });
-          await queryClient.invalidateQueries();
-        }}
-      >
-        Mint testnet tokens
-      </Button>
-    </div>
+    <Card>
+      <CardHeader>
+        <p>
+          Balance staking token:{" "}
+          {formatEther(balanceStaking?.data ?? BigInt(0)).toString()}
+        </p>
+        <p>
+          Balance liquidty token:{" "}
+          {formatEther(balanceLiqudity?.data ?? BigInt(0)).toString()}
+        </p>
+      </CardHeader>
+      <CardFooter>
+        <Button
+          onClick={async () => {
+            mintLiquidtyToken.writeContractAsync({
+              address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+              args: [props.address, BigInt("500000000000000000000")],
+            });
+            mintStakingToken.writeContractAsync({
+              address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
+              args: [props.address, BigInt("500000000000000000000")],
+            });
+            await queryClient.invalidateQueries();
+          }}
+        >
+          Mint testnet tokens
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
@@ -480,47 +483,52 @@ export const StakedTokens = (props: { address: Address; chainId: number }) => {
   const increaseAllowanceStaking = useWriteTestTokensIncreaseAllowance();
 
   return (
-    <>
-      <Button
-        disabled={
-          allowanceLiquidty?.data?.toString() === "0" ||
-          allowanceStaking?.data?.toString() === "0"
-        }
-        onClick={async () => {
-          stake.writeContractAsync({
-            address: GET_CONTRACT_ADDRESSES(chainId).StakeContract,
-            args: [BigInt(1000000000000000000), BigInt(1000000000000000000)],
-          });
-          await queryClient.invalidateQueries();
-        }}
-      >
-        Stake
-      </Button>
-      {allowanceStaking?.data?.toString() === "0" && (
+    <Card>
+      <CardHeader>
+        <div>Staked: {formatEther(balance?.data ?? BigInt(0)).toString()}</div>
+      </CardHeader>
+      <CardFooter>
         <Button
+          disabled={
+            allowanceLiquidty?.data?.toString() === "0" ||
+            allowanceStaking?.data?.toString() === "0"
+          }
           onClick={async () => {
-            increaseAllowanceStaking.writeContractAsync({
-              address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
-              args: [
-                GET_CONTRACT_ADDRESSES(chainId).StakeContract,
-                BigInt(1000000000000000000),
-              ],
-            });
-            increaseAllowanceLiquidty.writeContractAsync({
-              address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
-              args: [
-                GET_CONTRACT_ADDRESSES(chainId).StakeContract,
-                BigInt(1000000000000000000),
-              ],
+            stake.writeContractAsync({
+              address: GET_CONTRACT_ADDRESSES(chainId).StakeContract,
+              args: [BigInt(1000000000000000000), BigInt(1000000000000000000)],
             });
             await queryClient.invalidateQueries();
           }}
         >
-          Increase allowance for staking (currently{" "}
-          {allowanceStaking?.data?.toString()})
+          Stake
         </Button>
-      )}
-      <div>Staked: {formatEther(balance?.data ?? BigInt(0)).toString()}</div>
-    </>
+        {allowanceStaking?.data?.toString() === "0" && (
+          <Button
+            onClick={async () => {
+              increaseAllowanceStaking.writeContractAsync({
+                address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
+                args: [
+                  GET_CONTRACT_ADDRESSES(chainId).StakeContract,
+                  BigInt(1000000000000000000),
+                ],
+              });
+              increaseAllowanceLiquidty.writeContractAsync({
+                address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+                args: [
+                  GET_CONTRACT_ADDRESSES(chainId).StakeContract,
+                  BigInt(1000000000000000000),
+                ],
+              });
+              await queryClient.invalidateQueries();
+            }}
+          >
+            Increase allowance for staking (currently{" "}
+            {allowanceStaking?.data?.toString()})
+          </Button>
+        )}
+        <CreateMatchComponent />
+      </CardFooter>
+    </Card>
   );
 };
