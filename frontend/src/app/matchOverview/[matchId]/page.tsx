@@ -15,6 +15,7 @@ import React, { useMemo } from "react";
 import { GET_CONTRACT_ADDRESSES, useMatch } from "~/app/_components/MatchNFTs";
 import { useAccount, useChainId } from "wagmi";
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { MatchNFT } from "~/app/_components/MatchNFT";
 
 /**
  * uint256 id;
@@ -78,27 +79,12 @@ export default function MatchDetailView({
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       <w3m-button />
-      <DynamicWidget innerButtonComponent={<Button>Social login</Button>} />
-      <div>
-        {isAuthenticated ? <p>Authenticated</p> : <p>Not authenticated</p>}
-        <p>{address}</p>
-      </div>
-      <Card className="min-w-[50%]">
-        <CardHeader>
-          <h1>Match Overview</h1>
-        </CardHeader>
-        <CardContent className="min-w-full">
-          <p>Here vote {m?.outcome} a</p>
-          <div className="flex flex-row">
-            <Button className="min-w-[40%]" onClick={() => handleBet(true)}>
-              Bet true
-            </Button>
-            <Button className="min-w-[40%]" onClick={() => handleBet(false)}>
-              Bet false
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <DynamicWidget innerButtonComponent={<Button>Wallet?!</Button>} />
+      <MatchNFT
+        id={Number(params.matchId)}
+        address={address}
+        chainId={chainid}
+      />
     </main>
   );
 }
