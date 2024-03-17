@@ -8,12 +8,23 @@ import { Label } from "~/components/ui/label";
 import { Card, CardHeader } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { ADDRESSES } from "~/app/_components/MatchNFTs";
-import { useWriteStakeContractStake } from "~/generated";
+import {
+  ADDRESSES,
+  GET_CONTRACT_ADDRESSES,
+  MatchNFTs,
+  StakedTokens,
+} from "~/app/_components/MatchNFTs";
+import {
+  useReadTestTokensBalanceOf,
+  useWriteStakeContractStake,
+} from "~/generated";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAccount, useChainId } from "wagmi";
 
 export default function Staking() {
   const stake = useWriteStakeContractStake();
+  const chainId = useChainId();
+  const account = useAccount();
   const queryClient = useQueryClient();
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -36,26 +47,14 @@ export default function Staking() {
               />
               <p>USDc</p>
             </div>
-            <Button
-              className="w-[50%]"
-              onClick={async () => {
-                stake
-                  .writeContractAsync({
-                    address: ADDRESSES["base-sepolia"].StakeContract,
-                    args: [
-                      BigInt(1000000000000000000),
-                      BigInt(1000000000000000000),
-                    ],
-                  })
-                  .catch((e) => console.error(e));
-                await queryClient.invalidateQueries();
-              }}
-            >
-              Create Match and start receiving bets
-            </Button>
+            <w3m-button />
+            {account.address && (
+              <StakedTokens chainId={chainId} address={account.address} />
+            )}
           </div>
         </CardContent>
       </Card>
+      <MatchNFTs />
     </main>
   );
 }

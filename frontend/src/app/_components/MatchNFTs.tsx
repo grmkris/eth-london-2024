@@ -411,6 +411,7 @@ export const ContractInteractions = () => {
     <div>
       <TestnetTokens address={account.address} chainId={chainId} />
       <StakedTokens address={account.address} chainId={chainId} />
+      <CreateMatchComponent />
       <MatchNFTs />
     </div>
   );
@@ -494,18 +495,7 @@ export const StakedTokens = (props: { address: Address; chainId: number }) => {
             allowanceStaking?.data?.toString() === "0"
           }
           onClick={async () => {
-            stake.writeContractAsync({
-              address: GET_CONTRACT_ADDRESSES(chainId).StakeContract,
-              args: [BigInt(1000000000000000000), BigInt(1000000000000000000)],
-            });
-            await queryClient.invalidateQueries();
-          }}
-        >
-          Stake
-        </Button>
-        {allowanceStaking?.data?.toString() === "0" && (
-          <Button
-            onClick={async () => {
+            if (allowanceStaking?.data?.toString() === "0") {
               increaseAllowanceStaking.writeContractAsync({
                 address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
                 args: [
@@ -520,14 +510,17 @@ export const StakedTokens = (props: { address: Address; chainId: number }) => {
                   BigInt(1000000000000000000),
                 ],
               });
-              await queryClient.invalidateQueries();
-            }}
-          >
-            Increase allowance for staking (currently{" "}
-            {allowanceStaking?.data?.toString()})
-          </Button>
-        )}
-        <CreateMatchComponent />
+            }
+
+            stake.writeContractAsync({
+              address: GET_CONTRACT_ADDRESSES(chainId).StakeContract,
+              args: [BigInt(1000000000000000000), BigInt(1000000000000000000)],
+            });
+            await queryClient.invalidateQueries();
+          }}
+        >
+          Stake
+        </Button>
       </CardFooter>
     </Card>
   );
