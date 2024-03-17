@@ -4,13 +4,10 @@ import { CardContent, CardHeader, Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useWriteDecentralizedBettingCreateEvent } from "~/generated";
-import {
-  ADDRESSES,
-  GET_CONTRACT_ADDRESSES,
-  MatchNFTs,
-} from "~/app/_components/MatchNFTs";
+import { GET_CONTRACT_ADDRESSES } from "~/app/_components/MatchNFTs";
 import { useState } from "react";
 import { useChainId } from "wagmi";
+import { TrendingUpIcon } from "lucide-react";
 
 export default function CreateMatch() {
   const writeDecentralizedBettingCreateEvent =
@@ -24,7 +21,7 @@ export default function CreateMatch() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-primary to-secondary">
       <Card className="min-w-[50%]">
         <CardHeader>
-          <h1>Create Match</h1>
+          <h3 className="text-lg font-medium leading-none">Create Match</h3>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-row justify-between">
@@ -37,6 +34,42 @@ export default function CreateMatch() {
               placeholder="Match Name"
               type="date"
               onChange={handleDateChange}
+            />
+          </div>
+          <div className="flex flex-row justify-between">
+            <Label className="text-sm" htmlFor="stake-assets">
+              Team A
+            </Label>
+            <Input
+              className="w-[50%] text-secondary"
+              id="team-a"
+              placeholder="Team A"
+            />
+            <Label className="text-sm" htmlFor="stake-assets">
+              Team A Odds
+            </Label>
+            <Input
+              className="w-[50%] text-secondary"
+              id="team-a-odds"
+              placeholder="Team A Odds"
+            />
+          </div>
+          <div className="flex flex-row justify-between">
+            <Label className="text-sm" htmlFor="stake-assets">
+              Team B
+            </Label>
+            <Input
+              className="w-[50%] text-secondary"
+              id="team-b"
+              placeholder="Team B"
+            />
+            <Label className="text-sm" htmlFor="stake-assets">
+              Team A Odds
+            </Label>
+            <Input
+              className="w-[50%] text-secondary"
+              id="team-a-odds"
+              placeholder="Team A Odds"
             />
           </div>
           <Button

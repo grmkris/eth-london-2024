@@ -55,6 +55,14 @@ export const MatchNFT = ({
   });
 
   const handleBet = async (decision: boolean) => {
+    await increaseAllowanceLiquidty.writeContractAsync({
+      address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+      args: [
+        GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
+        BigInt(1000000000000000000),
+      ],
+    });
+    await queryClient.invalidateQueries();
     await bet.writeContractAsync({
       address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
       args: [BigInt(id), decision, BigInt(1000000000000000000)],
@@ -183,31 +191,30 @@ export const MatchNFT = ({
                 <p>Hello Fan</p>
                 {!betStatus?.data?.[0] > 0 ? (
                   <>
-                    <Button onClick={() => handleBet(true)}>Bet true</Button>
-                    <Button onClick={() => handleBet(false)}>Bet false</Button>
-                    {
-                      // increase allowance for staking and liquidity tokens
-                      allowanceLiquidty?.data?.toString() === "0" && (
-                        <Button
-                          onClick={async () => {
-                            await increaseAllowanceLiquidty.writeContractAsync({
-                              address:
-                                GET_CONTRACT_ADDRESSES(chainId)
-                                  .TEST_LiqudityToken,
-                              args: [
-                                GET_CONTRACT_ADDRESSES(chainId)
-                                  .DecentralizedBetting,
-                                BigInt(1000000000000000000),
-                              ],
-                            });
-                            await queryClient.invalidateQueries();
-                          }}
-                        >
-                          Increase allowance liquidty (currently{" "}
-                          {allowanceLiquidty?.data?.toString()})
-                        </Button>
-                      )
-                    }
+                    <Button
+                      isLoading={
+                        bet.isPending || increaseAllowanceLiquidty.isPending
+                      }
+                      disabled={
+                        bet.isPending || increaseAllowanceLiquidty.isPending
+                      }
+                      loadingText="Bet is pending..."
+                      onClick={() => handleBet(true)}
+                    >
+                      First team wins
+                    </Button>
+                    <Button
+                      isLoading={
+                        bet.isPending || increaseAllowanceLiquidty.isPending
+                      }
+                      disabled={
+                        bet.isPending || increaseAllowanceLiquidty.isPending
+                      }
+                      loadingText="Bet is pending..."
+                      onClick={() => handleBet(false)}
+                    >
+                      Second team wins
+                    </Button>
                   </>
                 ) : (
                   <div>
@@ -219,8 +226,20 @@ export const MatchNFT = ({
             {!!staking?.data && (
               <div>
                 <p>Hello Staker</p>
-                <Button onClick={() => handleOracle(true)}>Resolve true</Button>
-                <Button onClick={() => handleOracle(false)}>
+                <Button
+                  isLoading={oracle.isPending}
+                  disabled={oracle.isPending}
+                  loadingText="Bet is pending..."
+                  onClick={() => handleOracle(true)}
+                >
+                  Resolve true
+                </Button>
+                <Button
+                  isLoading={oracle.isPending}
+                  disabled={oracle.isPending}
+                  loadingText="Bet is pending..."
+                  onClick={() => handleOracle(false)}
+                >
                   Resolve false
                 </Button>
                 <Button
