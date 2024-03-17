@@ -83,6 +83,76 @@ export async function GET(
       description:
         "Manchester United and Everton are set to face off in a match that's eagerly awaited by fans, with expectations high for an exciting game.",
     },
+    "11": {
+      match: "Sevilla vs Betis",
+      score: "Score: Not started yet",
+      odds: "Odds: Sevilla 2.0 <-> Betis 3.6",
+      description:
+        "The Seville derby heats up as Sevilla faces Betis in a passionate encounter that's central to both teams' league ambitions.",
+    },
+    "12": {
+      match: "Roma vs Lazio",
+      score: "Score: Not started yet",
+      odds: "Odds: Roma 2.1 <-> Lazio 3.4",
+      description:
+        "A fierce battle in the heart of Italy, the Rome derby sees Roma and Lazio clash in a high-stakes match filled with historic rivalry.",
+    },
+    "13": {
+      match: "Porto vs Benfica",
+      score: "Score: Not started yet",
+      odds: "Odds: Porto 2.2 <-> Benfica 3.1",
+      description:
+        "Portugal's prime teams face off in a decisive match that could tilt the title race, showcasing the best of Portuguese football.",
+    },
+    "14": {
+      match: "Ajax vs Feyenoord",
+      score: "Score: Not started yet",
+      odds: "Ajax 1.8 <-> Feyenoord 4.3",
+      description:
+        "The Dutch classic rivalry ignites once more as Ajax and Feyenoord compete for supremacy in a game known for its intense atmosphere.",
+    },
+    "15": {
+      match: "Boca Juniors vs River Plate",
+      score: "Score: Not started yet",
+      odds: "Odds: Boca Juniors 2.5 <-> River Plate 2.7",
+      description:
+        "Argentina's most famous football clash, the Superclásico, promises a spectacle as Boca Juniors take on River Plate.",
+    },
+    "16": {
+      match: "Celtic vs Rangers",
+      score: "Score: Not started yet",
+      odds: "Odds: Celtic 2.3 <-> Rangers 3.0",
+      description:
+        "Scotland's biggest football rivalry, the Old Firm derby, pits Celtic against Rangers in a match with historic and cultural significance.",
+    },
+    "17": {
+      match: "Galatasaray vs Fenerbahce",
+      score: "Score: Not started yet",
+      odds: "Odds: Galatasaray 2.4 <-> Fenerbahce 2.9",
+      description:
+        "The Istanbul derby brings together Galatasaray and Fenerbahce in a fierce contest that's about pride as much as it is about points.",
+    },
+    "18": {
+      match: "Olympiacos vs Panathinaikos",
+      score: "Score: Not started yet",
+      odds: "Odds: Olympiacos 1.9 <-> Panathinaikos 4.0",
+      description:
+        "Greece's most intense rivalry sees Olympiacos and Panathinaikos face off in a match filled with passion and tradition.",
+    },
+    "19": {
+      match: "Spartak Moscow vs Zenit",
+      score: "Score: Not started yet",
+      odds: "Odds: Spartak Moscow 2.6 <-> Zenit 2.8",
+      description:
+        "A clash of titans in Russian football, Spartak Moscow and Zenit St. Petersburg battle it out in a match with high stakes for the league title.",
+    },
+    "20": {
+      match: "Al Ahly vs Zamalek",
+      score: "Score: Not started yet",
+      odds: "Odds: Al Ahly 2.0 <-> Zamalek 3.5",
+      description:
+        "Egypt's fiercest football rivalry, the Cairo derby, sees Al Ahly and Zamalek compete in a match that divides the city in two.",
+    },
   };
 
   // Fallback data if the tokenID does not match
