@@ -17,6 +17,7 @@ import {
 import {
   useReadTestTokensBalanceOf,
   useWriteStakeContractStake,
+  useWriteTestTokensMint,
 } from "~/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAccount, useChainId } from "wagmi";
@@ -26,35 +27,36 @@ export default function Staking() {
   const chainId = useChainId();
   const account = useAccount();
   const queryClient = useQueryClient();
+  const mintStakingToken = useWriteTestTokensMint();
+  const mintLiquidtyToken = useWriteTestTokensMint();
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       <Card className="min-w-[50%]">
         <CardHeader>
-          <h1>Stake Tokens to Become a social Oracle</h1>
+          <h1>Mint Testnet Tokens to stake and participate as Oracle</h1>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col space-y-4">
-            <Label className="text-sm" htmlFor="stake-assets">
-              Provide USDc, earn LP tokens. Use LP tokens to open matches to bet
-              on.
-            </Label>
-            <div className="flex flex-row">
-              <Input
-                className="w-[50%]"
-                id="lp-tokens"
-                placeholder="Enter amount"
-                type="number"
-              />
-              <p>USDc</p>
-            </div>
-            <w3m-button />
-            {account.address && (
-              <StakedTokens chainId={chainId} address={account.address} />
-            )}
+            <Button
+              onClick={async () => {
+                account.address &&
+                await mintLiquidtyToken.writeContractAsync({
+                  address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
+                  args: [account.address, BigInt("500000000000000000000")],
+                });
+                account.address &&
+                await mintStakingToken.writeContractAsync({
+                  address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
+                  args: [account.address, BigInt("500000000000000000000")],
+                });
+                await queryClient.invalidateQueries();
+              }}
+            >
+              Mint testnet tokens
+            </Button>
           </div>
         </CardContent>
       </Card>
     </main>
   );
-  //<MatchNFTs />
 }
