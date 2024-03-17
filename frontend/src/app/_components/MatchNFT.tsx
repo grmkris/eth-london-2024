@@ -62,7 +62,6 @@ export const MatchNFT = ({
         BigInt(1000000000000000000),
       ],
     });
-    await queryClient.invalidateQueries();
     await bet.writeContractAsync({
       address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
       args: [BigInt(id), decision, BigInt(1000000000000000000)],
