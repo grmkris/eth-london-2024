@@ -4,14 +4,18 @@ import { CardContent, CardHeader, Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useWriteDecentralizedBettingCreateEvent } from "~/generated";
-import { ADDRESSES } from "~/app/_components/MatchNFTs";
+import {
+  ADDRESSES,
+  GET_CONTRACT_ADDRESSES,
+  MatchNFTs,
+} from "~/app/_components/MatchNFTs";
 import { useState } from "react";
+import { useChainId } from "wagmi";
 
 export default function CreateMatch() {
   const writeDecentralizedBettingCreateEvent =
     useWriteDecentralizedBettingCreateEvent();
-
-  const [timeStamp, setTimestamp] = useState(new Date().getTime() / 1000);
+  const chainid = useChainId();
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTimestamp(new Date(e.target.value).getTime() / 1000);
   };
@@ -57,22 +61,26 @@ export default function CreateMatch() {
           </div>
           <p>Team initial distribution</p>
           <Button
+            isLoading={writeDecentralizedBettingCreateEvent.isPending}
+            disabled={writeDecentralizedBettingCreateEvent.isPending}
+            loadingText="Creating match"
             className="w-[50%]"
-            onClick={() => {
-              writeDecentralizedBettingCreateEvent
+            onClick={async () => {
+              await writeDecentralizedBettingCreateEvent
                 .writeContractAsync({
-                  address: ADDRESSES["base-sepolia"].DecentralizedBetting,
-                  args: [BigInt(timeStamp.toString())],
+                  address: GET_CONTRACT_ADDRESSES(chainid).DecentralizedBetting,
+                  args: [BigInt(Date.now())],
                 })
                 .catch((e) => {
                   console.log(e);
                 });
             }}
           >
-            Stake and Receive lpToken
+            Create a match
           </Button>
         </CardContent>
       </Card>
+      <MatchNFTs />
     </main>
   );
 }

@@ -125,14 +125,16 @@ export const MatchNFTs = () => {
   return (
     <div>
       <h1>Matches</h1>
-      {MATCH_IDS.map((id) => (
-        <MatchNFT
-          key={id}
-          id={id}
-          address={account.address}
-          chainId={chainId}
-        />
-      ))}
+      <div className="flex flex-col-reverse space-x-4">
+        {MATCH_IDS.map((id) => (
+          <MatchNFT
+            key={id}
+            id={id}
+            address={account.address}
+            chainId={chainId}
+          />
+        ))}
+      </div>
     </div>
   );
 };
@@ -186,7 +188,7 @@ export const MatchNFT = ({
   });
 
   const handleBet = async (decision: boolean) => {
-    bet.writeContractAsync({
+    await bet.writeContractAsync({
       address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
       args: [BigInt(id), decision, BigInt(1000000000000000000)],
     });
@@ -196,7 +198,7 @@ export const MatchNFT = ({
   const determineCorrectAnswer = useWriteSocialOracleDetermineCorrectAnswer();
   const resolveEvent = useWriteDecentralizedBettingResolveEvent();
   const handleOracle = async (decision: boolean) => {
-    oracle.writeContractAsync({
+    await oracle.writeContractAsync({
       address: GET_CONTRACT_ADDRESSES(chainId).SocialOracle,
       args: [BigInt(id), decision],
     });
@@ -260,6 +262,10 @@ export const MatchNFT = ({
               View on OpenSea
             </Link>
           )}
+          <br />
+          <Link href={`/matchOverview/${id}`} target="_blank">
+            View match
+          </Link>
           <p>
             {tokenMetadata?.data?.name ?? "Loading"} -{" "}
             {tokenMetadata?.data?.description ?? "Loading"}
@@ -290,7 +296,7 @@ export const MatchNFT = ({
               mappedMatch.outcome === betStatus?.data?.[1] && (
                 <Button
                   onClick={async () => {
-                    claim.writeContractAsync({
+                    await claim.writeContractAsync({
                       address:
                         GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
                       args: [BigInt(id)],
@@ -317,7 +323,7 @@ export const MatchNFT = ({
                       allowanceLiquidty?.data?.toString() === "0" && (
                         <Button
                           onClick={async () => {
-                            increaseAllowanceLiquidty.writeContractAsync({
+                            await increaseAllowanceLiquidty.writeContractAsync({
                               address:
                                 GET_CONTRACT_ADDRESSES(chainId)
                                   .TEST_LiqudityToken,
@@ -353,7 +359,7 @@ export const MatchNFT = ({
                 <Button
                   onClick={async () => {
                     try {
-                      determineCorrectAnswer.writeContractAsync({
+                      await determineCorrectAnswer.writeContractAsync({
                         address: GET_CONTRACT_ADDRESSES(chainId).SocialOracle,
                         args: [BigInt(id)],
                       });
@@ -361,7 +367,7 @@ export const MatchNFT = ({
                     } catch (e) {
                       console.error(e);
                     }
-                    resolveEvent.writeContractAsync({
+                    await resolveEvent.writeContractAsync({
                       address:
                         GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
                       args: [BigInt(id)],
@@ -390,7 +396,7 @@ export const CreateMatchComponent = () => {
   return (
     <Button
       onClick={async () => {
-        writeDecentralizedBettingCreateEvent.writeContractAsync({
+        await writeDecentralizedBettingCreateEvent.writeContractAsync({
           address: GET_CONTRACT_ADDRESSES(chainId).DecentralizedBetting,
           args: [BigInt(timestamp)],
         });
@@ -446,11 +452,11 @@ export const TestnetTokens = (props: { address: Address; chainId: number }) => {
       <CardFooter>
         <Button
           onClick={async () => {
-            mintLiquidtyToken.writeContractAsync({
+            await mintLiquidtyToken.writeContractAsync({
               address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
               args: [props.address, BigInt("500000000000000000000")],
             });
-            mintStakingToken.writeContractAsync({
+            await mintStakingToken.writeContractAsync({
               address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
               args: [props.address, BigInt("500000000000000000000")],
             });
@@ -491,28 +497,35 @@ export const StakedTokens = (props: { address: Address; chainId: number }) => {
       <CardFooter>
         <Button
           disabled={
-            allowanceLiquidty?.data?.toString() === "0" ||
-            allowanceStaking?.data?.toString() === "0"
+            increaseAllowanceLiquidty.isPending ||
+            increaseAllowanceStaking.isPending ||
+            stake.isPending
           }
+          isLoading={
+            increaseAllowanceLiquidty.isPending ||
+            increaseAllowanceStaking.isPending ||
+            stake.isPending
+          }
+          loadingText="Staking"
           onClick={async () => {
             if (allowanceStaking?.data?.toString() === "0") {
-              increaseAllowanceStaking.writeContractAsync({
+              await increaseAllowanceStaking.writeContractAsync({
                 address: GET_CONTRACT_ADDRESSES(chainId).TEST_StakingToken,
                 args: [
                   GET_CONTRACT_ADDRESSES(chainId).StakeContract,
-                  BigInt(1000000000000000000),
+                  BigInt(1000000000000000000000000),
                 ],
               });
-              increaseAllowanceLiquidty.writeContractAsync({
+              await increaseAllowanceLiquidty.writeContractAsync({
                 address: GET_CONTRACT_ADDRESSES(chainId).TEST_LiqudityToken,
                 args: [
                   GET_CONTRACT_ADDRESSES(chainId).StakeContract,
-                  BigInt(1000000000000000000),
+                  BigInt(1000000000000000000000000),
                 ],
               });
             }
 
-            stake.writeContractAsync({
+            await stake.writeContractAsync({
               address: GET_CONTRACT_ADDRESSES(chainId).StakeContract,
               args: [BigInt(1000000000000000000), BigInt(1000000000000000000)],
             });

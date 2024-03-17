@@ -4,23 +4,17 @@ import {
   CardContent,
   CardFooter,
   Card,
-} from "../components/ui/card";
-import { Label } from "../components/ui/label";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import { Textarea } from "../components/ui/textarea";
+} from "~/components/ui/card";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+
 import { Slider } from "~/components/ui/slider";
 
 import { CreatePost } from "~/app/_components/create-post";
 import { api } from "~/trpc/server";
 import { HelloForm } from "~/app/_components/FormComponent";
-import {
-  CreateMatchComponent,
-  MatchNFT,
-  MatchNFTs,
-  TestnetTokens,
-  ContractInteractions,
-} from "~/app/_components/MatchNFTs";
+import { ContractInteractions } from "~/app/_components/MatchNFTs";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
