@@ -16,6 +16,7 @@ export default function CreateMatch() {
   const writeDecentralizedBettingCreateEvent =
     useWriteDecentralizedBettingCreateEvent();
   const chainid = useChainId();
+  const [timestamp, setTimestamp] = useState<number>(); // [1
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTimestamp(new Date(e.target.value).getTime() / 1000);
   };
@@ -28,17 +29,6 @@ export default function CreateMatch() {
         <CardContent className="space-y-4">
           <div className="flex flex-row justify-between">
             <Label className="text-sm" htmlFor="stake-assets">
-              Match Name
-            </Label>
-            <Input
-              className="w-[50%] text-secondary"
-              id="match-name"
-              placeholder="Match Name"
-              type="string"
-            />
-          </div>
-          <div className="flex flex-row justify-between">
-            <Label className="text-sm" htmlFor="stake-assets">
               Match Date
             </Label>
             <Input
@@ -49,27 +39,20 @@ export default function CreateMatch() {
               onChange={handleDateChange}
             />
           </div>
-          <div className="flex flex-row justify-between">
-            <div className="min-w-[40%]">
-              <Label className="text-sm">Team A</Label>
-              <Input className="text-secondary" placeholder="Name Team A" />
-            </div>
-            <div className="min-w-[40%]">
-              <Label className="text-sm">Team B</Label>
-              <Input className="text-secondary" placeholder="Name Team B" />
-            </div>
-          </div>
-          <p>Team initial distribution</p>
           <Button
             isLoading={writeDecentralizedBettingCreateEvent.isPending}
             disabled={writeDecentralizedBettingCreateEvent.isPending}
             loadingText="Creating match"
-            className="w-[50%]"
+            className="w-[100%]"
             onClick={async () => {
               await writeDecentralizedBettingCreateEvent
                 .writeContractAsync({
                   address: GET_CONTRACT_ADDRESSES(chainid).DecentralizedBetting,
-                  args: [BigInt(Date.now())],
+                  args: [
+                    BigInt(
+                      timestamp ? timestamp.toString() : Date.now().toString(),
+                    ),
+                  ],
                 })
                 .catch((e) => {
                   console.log(e);
@@ -80,7 +63,6 @@ export default function CreateMatch() {
           </Button>
         </CardContent>
       </Card>
-      <MatchNFTs />
     </main>
   );
 }
